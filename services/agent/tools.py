@@ -2,7 +2,12 @@ from __future__ import annotations
 
 from strands import tool
 
-from policy import RemedyRun, deterministic_plan, idempotency_key
+from policy import (
+    RemedyRun,
+    deterministic_plan,
+    idempotency_key,
+    provider_confirmation_is_valid,
+)
 
 
 @tool
@@ -58,13 +63,15 @@ def submit_sandbox_claim(contract: dict, evidence_filename: str) -> dict:
 
 @tool
 def check_sandbox_outcome(contract: dict, provider_confirmation: str | None = None) -> dict:
-    """Check the controlled provider outcome; never infer completion from submission alone."""
+    """Check the controlled provider outcome; never trust an arbitrary completion string."""
     run = RemedyRun.model_validate(
         {"contract": contract, "provider_confirmation": provider_confirmation}
     )
+    verified = provider_confirmation_is_valid(
+        run.contract.id, run.provider_confirmation
+    )
     return {
-        "state": "REMEDIATED" if provider_confirmation else "AWAITING_PROVIDER",
-        "verified": bool(provider_confirmation),
-        "provider_confirmation": provider_confirmation,
+        "state": "REMEDIATED" if verified else "AWAITING_PROVIDER",
+        "verified": verified,
+        "provider_confirmation": run.provider_confirmation if verified else None,
     }
-

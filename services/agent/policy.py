@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from hashlib import sha256
+from hmac import compare_digest
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -31,6 +32,22 @@ def idempotency_key(contract_id: str, action: str) -> str:
     return sha256(f"{contract_id}:{action}:v1".encode()).hexdigest()[:24]
 
 
+def sandbox_provider_confirmation(contract_id: str) -> str:
+    """Return the deterministic demo-provider token bound to exactly one contract.
+
+    This token is only a sandbox fixture, not a production signature. A production
+    provider integration must verify a provider-controlled callback or signature.
+    """
+    digest = sha256(f"recallzero-sandbox:{contract_id}:approved:v1".encode()).hexdigest()[:24]
+    return f"SBX-{digest.upper()}"
+
+
+def provider_confirmation_is_valid(contract_id: str, confirmation: str | None) -> bool:
+    if not confirmation:
+        return False
+    return compare_digest(confirmation, sandbox_provider_confirmation(contract_id))
+
+
 def deterministic_plan(run: RemedyRun) -> dict:
     """Policy-owned plan used for tests and no-credential public demonstrations."""
     steps: list[dict] = [
@@ -46,6 +63,13 @@ def deterministic_plan(run: RemedyRun) -> dict:
     if not run.provider_confirmation:
         steps.append({"tool": "check_sandbox_outcome", "status": "waiting"})
         return {"state": "AWAITING_PROVIDER", "steps": steps, "sandbox": True}
+    if not provider_confirmation_is_valid(run.contract.id, run.provider_confirmation):
+        steps.append({"tool": "check_sandbox_outcome", "status": "rejected"})
+        return {
+            "state": "AWAITING_PROVIDER",
+            "steps": steps,
+            "sandbox": True,
+            "warning": "Provider confirmation did not bind to this Remedy Contract.",
+        }
     steps.append({"tool": "check_sandbox_outcome", "status": "complete"})
     return {"state": "REMEDIATED", "steps": steps, "sandbox": True}
-
