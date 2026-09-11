@@ -1,3 +1,4 @@
+import { matchAssetToRecall } from "./match";
 import type {
   AgentAction,
   AssetPassport,
@@ -69,11 +70,18 @@ const contractIsGoverned = (contract: RemedyContract | null) => Boolean(
   contract.recallUrl.startsWith("https://www.cpsc.gov/"),
 );
 
+const deterministicExactMatch = (
+  asset: AssetPassport | null,
+  recall: RecallRecord | null,
+) => Boolean(asset && recall && matchAssetToRecall(asset, recall).status === "EXACT_MATCH");
+
 export function isSafeHydratedState(candidate: DemoState): boolean {
   if (!candidate || typeof candidate !== "object") return false;
   if (!Array.isArray(candidate.timeline) || !Array.isArray(candidate.actions)) return false;
   const governed = contractIsGoverned(candidate.contract);
-  const exact = candidate.match?.status === "EXACT_MATCH";
+  const exact =
+    candidate.match?.status === "EXACT_MATCH" &&
+    deterministicExactMatch(candidate.asset, candidate.recall);
   const hasIdentity = Boolean(candidate.asset && candidate.recall && exact && governed);
   const hasEvidence = Boolean(candidate.evidenceFile?.trim());
   const hasValidProvider = providerConfirmationMatches(
@@ -106,8 +114,9 @@ export function createRemedyContract(
   recall: RecallRecord,
   match: MatchDecision,
 ): RemedyContract {
-  if (match.status !== "EXACT_MATCH") {
-    throw new Error("Safety gate: only an EXACT_MATCH may create a remedy contract.");
+  const verifiedMatch = matchAssetToRecall(asset, recall);
+  if (match.status !== "EXACT_MATCH" || verifiedMatch.status !== "EXACT_MATCH") {
+    throw new Error("Safety gate: only a deterministically recomputed EXACT_MATCH may create a remedy contract.");
   }
   return {
     id: `rc-${recall.recallNumber}-${asset.id}`,
@@ -155,23 +164,25 @@ export function workflowReducer(state: DemoState, command: WorkflowCommand): Dem
       };
     case "CONFIRM_RECALL": {
       if (!state.asset) throw new Error("Import an asset before checking recalls.");
-      if (command.match.status !== "EXACT_MATCH") {
+      const verifiedMatch = matchAssetToRecall(state.asset, command.recall);
+      if (verifiedMatch.status !== "EXACT_MATCH") {
         return {
           ...state,
           recall: command.recall,
-          match: command.match,
+          match: verifiedMatch,
+          contract: null,
           status: "PROTECTED",
           timeline: [
             ...state.timeline,
-            event("PROTECTED", "Remedy blocked", command.match.explanation, "SYSTEM"),
+            event("PROTECTED", "Remedy blocked", verifiedMatch.explanation, "SYSTEM"),
           ],
         };
       }
-      const contract = createRemedyContract(state.asset, command.recall, command.match);
+      const contract = createRemedyContract(state.asset, command.recall, verifiedMatch);
       return {
         ...state,
         recall: command.recall,
-        match: command.match,
+        match: verifiedMatch,
         contract,
         status: "RECALL_CONFIRMED",
         timeline: [
