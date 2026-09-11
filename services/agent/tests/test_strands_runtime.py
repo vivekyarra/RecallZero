@@ -31,6 +31,8 @@ def test_real_strands_agent_constructs_with_only_governed_tools(monkeypatch):
     }
 
     result = agent.tool.inspect_remedy_contract(contract=CONTRACT)
-    assert result["verified"] is True
-    assert result["contract_id"] == CONTRACT["id"]
-    assert result["scope"] == "SANDBOX_ROUTINE_REMEDY_ONLY"
+    assert result["status"] == "success"
+    payload = next(item["json"] for item in result["content"] if "json" in item)
+    assert payload["verified"] is True
+    assert payload["contract_id"] == CONTRACT["id"]
+    assert payload["scope"] == "SANDBOX_ROUTINE_REMEDY_ONLY"
