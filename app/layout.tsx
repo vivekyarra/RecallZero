@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./responsive-fixes.css";
 
 export const metadata: Metadata = {
   title: "RecallZero — Your household safety autopilot",
@@ -14,4 +15,3 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     </html>
   );
 }
-

@@ -19,8 +19,12 @@ const apiRecall = z.object({
   RemedyOptions: z.array(optionName).default([]),
 }).passthrough();
 
-const endpoint =
-  "https://www.saferproducts.gov/RestWebServices/Recall?format=json&RecallDateStart=2026-09-01&RecallDateEnd=2026-09-11";
+const recallWindowStart = "2026-09-01";
+
+export function cpscEndpoint(now = new Date()): string {
+  const end = now.toISOString().slice(0, 10);
+  return `https://www.saferproducts.gov/RestWebServices/Recall?format=json&RecallDateStart=${recallWindowStart}&RecallDateEnd=${end}`;
+}
 
 function extractModels(text: string): string[] {
   return Array.from(text.matchAll(/\b[A-Z]{1,5}-\d{3,6}\b/g), (match) => match[0]);
@@ -55,11 +59,12 @@ export async function getXr8801Recall(): Promise<{
   sourceUrl: string;
   warning: string | null;
 }> {
+  const endpoint = cpscEndpoint();
   try {
     const response = await fetch(endpoint, {
       cache: "no-store",
       signal: AbortSignal.timeout(7_000),
-      headers: { Accept: "application/json", "User-Agent": "RecallZero-Hackathon/0.1" },
+      headers: { Accept: "application/json", "User-Agent": "RecallZero-Hackathon/1.0" },
     });
     if (!response.ok) throw new Error(`CPSC returned ${response.status}`);
     const payload = z.array(z.unknown()).parse(await response.json());
@@ -81,4 +86,3 @@ export async function getXr8801Recall(): Promise<{
     };
   }
 }
-

@@ -5,6 +5,11 @@ import nextTs from "eslint-config-next/typescript";
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores([".next/**", "coverage/**", "playwright-report/**", "services/**"]),
+  // RecallZero intentionally hydrates persisted demo state from localStorage once
+  // on mount. Scope the React performance advisory to this one external-state bridge.
+  {
+    files: ["components/recall-zero-app.tsx"],
+    rules: { "react-hooks/set-state-in-effect": "off" },
+  },
+  globalIgnores([".next/**", "coverage/**", "playwright-report/**", "test-results/**", "services/**"]),
 ]);
-

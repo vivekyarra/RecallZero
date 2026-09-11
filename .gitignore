@@ -15,4 +15,4 @@ __pycache__/
 .agentcore/
 dist/
 *.log
-
+tsconfig.tsbuildinfo

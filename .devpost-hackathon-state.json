@@ -14,32 +14,44 @@
   },
   "project": {
     "name": "RecallZero",
-    "summary": "An autonomous product-safety agent that identifies owned products, verifies exact CPSC recall matches, and completes remedy workflows through verified resolution.",
-    "ai_usage": "Strands agents interpret authoritative recall records and plan governed actions behind deterministic identity and completion gates.",
-    "codex_usage": "Codex is used to scope, implement, test, verify, and prepare the submission in a fresh repository during the competition period."
+    "summary": "An autonomous product-safety agent that identifies owned products, verifies exact CPSC recall matches, and completes governed remedy workflows through verified resolution.",
+    "ai_usage": "Strands Agents interprets verified Remedy Contracts and uses narrow tools behind deterministic identity, evidence, and completion gates.",
+    "codex_usage": "Used to scope, implement, test, verify, harden, and prepare the hackathon submission in the public repository."
   },
-  "current_stage": "resources",
+  "current_stage": "prepare",
   "completed_stages": [
     "start-hackathon",
     "review",
-    "resources"
+    "resources",
+    "build-project"
   ],
   "rules_acknowledged": true,
   "learning": {
-    "status": "active",
-    "current_step": "checklist",
+    "status": "complete",
+    "current_step": "build",
     "completed_steps": [
       "onboard",
       "scope",
       "prd",
-      "spec"
+      "spec",
+      "checklist",
+      "build"
     ],
     "plan_file": "docs/hackathon-build/scope.md",
     "checklist_file": "docs/hackathon-build/checklist.md"
   },
   "submission": {
     "draft_file": "devpost-submission.md",
-    "status": "not-started"
+    "status": "draft-created",
+    "devpost_project_id": 1424740,
+    "devpost_project_slug": "recallzero-ue2p7g",
+    "devpost_submission_id": 1178539,
+    "required_before_final": [
+      "public demo video URL",
+      "AWS Builder ID",
+      "submitter type and country answers",
+      "architecture file upload"
+    ]
   },
-  "next_command": "build-project"
+  "next_command": "record-demo-and-submit"
 }

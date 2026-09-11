@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:agent": "uv run --project services/agent pytest",
+    "test:agent": "cd services/agent && uv run pytest",
     "verify": "npm run lint && npm run typecheck && npm test && npm run test:agent && npm run build",
     "check:secrets": "node scripts/check-secrets.mjs"
   },
@@ -41,4 +41,3 @@
     "node": ">=22"
   }
 }
-
