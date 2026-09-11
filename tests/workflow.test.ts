@@ -23,6 +23,22 @@ describe("governed remedy workflow", () => {
     expect(() => createRemedyContract(DEMO_ASSET, XR8801_RECALL_SNAPSHOT, { ...exact, status: "POSSIBLE_MATCH" })).toThrow(/Safety gate/);
   });
 
+  it("recomputes identity and rejects a forged exact-match decision", () => {
+    const wrongAsset = { ...DEMO_ASSET, model: "XR-9999" };
+    const forgedExact = { ...exact, status: "EXACT_MATCH" as const, confidence: 1 };
+    expect(() => createRemedyContract(wrongAsset, XR8801_RECALL_SNAPSHOT, forgedExact)).toThrow(/recomputed EXACT_MATCH/);
+
+    let state = workflowReducer(INITIAL_DEMO_STATE, { type: "IMPORT_ASSET", asset: wrongAsset });
+    state = workflowReducer(state, {
+      type: "CONFIRM_RECALL",
+      recall: XR8801_RECALL_SNAPSHOT,
+      match: forgedExact,
+    });
+    expect(state.status).toBe("PROTECTED");
+    expect(state.contract).toBeNull();
+    expect(state.match?.status).not.toBe("EXACT_MATCH");
+  });
+
   it("cannot self-declare completion", () => {
     expect(() => workflowReducer(INITIAL_DEMO_STATE, { type: "VERIFY_COMPLETION" })).toThrow(/requires physical evidence/);
   });
@@ -49,6 +65,15 @@ describe("governed remedy workflow", () => {
       ...state,
       status: "REMEDIATED" as const,
       providerConfirmation: "FORGED",
+    };
+    expect(workflowReducer(INITIAL_DEMO_STATE, { type: "HYDRATE", state: tampered })).toEqual(INITIAL_DEMO_STATE);
+  });
+
+  it("refuses persisted exact-match state whose asset identity was tampered", () => {
+    const state = awaitingProviderState();
+    const tampered = {
+      ...state,
+      asset: state.asset ? { ...state.asset, model: "XR-9999" } : null,
     };
     expect(workflowReducer(INITIAL_DEMO_STATE, { type: "HYDRATE", state: tampered })).toEqual(INITIAL_DEMO_STATE);
   });
