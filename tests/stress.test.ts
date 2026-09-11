@@ -32,4 +32,20 @@ describe("deterministic safety stress", () => {
       expect(() => workflowReducer(INITIAL_DEMO_STATE, { type: "VERIFY_COMPLETION" })).toThrow();
     }
   });
+
+  it("rejects 1,000 forged provider confirmations", () => {
+    const exact = matchAssetToRecall(DEMO_ASSET, XR8801_RECALL_SNAPSHOT);
+    let state = workflowReducer(INITIAL_DEMO_STATE, { type: "IMPORT_ASSET", asset: DEMO_ASSET });
+    state = workflowReducer(state, { type: "CONFIRM_RECALL", recall: XR8801_RECALL_SNAPSHOT, match: exact });
+    state = workflowReducer(state, { type: "START_REMEDY" });
+    state = workflowReducer(state, { type: "RECORD_EVIDENCE", filename: "synthetic-cut-cord.jpg" });
+    state = workflowReducer(state, { type: "SUBMIT_SANDBOX" });
+
+    for (let index = 0; index < 1_000; index += 1) {
+      expect(() => workflowReducer(state, {
+        type: "CONFIRM_PROVIDER",
+        confirmation: `FORGED-${index}`,
+      })).toThrow(/contract-bound/);
+    }
+  });
 });

@@ -49,6 +49,58 @@ export const stableIdempotencyKey = (contractId: string, action: string) => {
   return `${(a >>> 0).toString(16).padStart(8, "0")}${(b >>> 0).toString(16).padStart(8, "0")}${input.length.toString(16).padStart(8, "0")}`;
 };
 
+export const expectedSandboxProviderConfirmation = (contract: RemedyContract) =>
+  `SANDBOX-APPROVED-${contract.recallNumber}`;
+
+const providerConfirmationMatches = (
+  contract: RemedyContract | null,
+  confirmation: string | null,
+) => Boolean(
+  contract &&
+  confirmation &&
+  confirmation === expectedSandboxProviderConfirmation(contract),
+);
+
+const contractIsGoverned = (contract: RemedyContract | null) => Boolean(
+  contract &&
+  contract.authority === "US CPSC" &&
+  contract.matchStatus === "EXACT_MATCH" &&
+  contract.agentAuthority === "SANDBOX_ROUTINE_REMEDY_ONLY" &&
+  contract.recallUrl.startsWith("https://www.cpsc.gov/"),
+);
+
+export function isSafeHydratedState(candidate: DemoState): boolean {
+  if (!candidate || typeof candidate !== "object") return false;
+  if (!Array.isArray(candidate.timeline) || !Array.isArray(candidate.actions)) return false;
+  const governed = contractIsGoverned(candidate.contract);
+  const exact = candidate.match?.status === "EXACT_MATCH";
+  const hasIdentity = Boolean(candidate.asset && candidate.recall && exact && governed);
+  const hasEvidence = Boolean(candidate.evidenceFile?.trim());
+  const hasValidProvider = providerConfirmationMatches(
+    candidate.contract,
+    candidate.providerConfirmation,
+  );
+
+  if (candidate.providerConfirmation && !hasValidProvider) return false;
+
+  switch (candidate.status) {
+    case "PROTECTED":
+      return !candidate.contract;
+    case "RECALL_CONFIRMED":
+      return hasIdentity && !hasEvidence && !candidate.providerConfirmation;
+    case "NEEDS_HUMAN":
+      return hasIdentity && !hasEvidence && !candidate.providerConfirmation;
+    case "REMEDIATING":
+      return hasIdentity && hasEvidence && !candidate.providerConfirmation;
+    case "AWAITING_PROVIDER":
+      return hasIdentity && hasEvidence;
+    case "REMEDIATED":
+      return hasIdentity && hasEvidence && hasValidProvider;
+    default:
+      return false;
+  }
+}
+
 export function createRemedyContract(
   asset: AssetPassport,
   recall: RecallRecord,
@@ -78,7 +130,7 @@ export function createRemedyContract(
 export function workflowReducer(state: DemoState, command: WorkflowCommand): DemoState {
   switch (command.type) {
     case "HYDRATE":
-      return command.state;
+      return isSafeHydratedState(command.state) ? command.state : state;
     case "RESET":
       return {
         asset: null,
@@ -129,8 +181,8 @@ export function workflowReducer(state: DemoState, command: WorkflowCommand): Dem
       };
     }
     case "START_REMEDY": {
-      if (state.status !== "RECALL_CONFIRMED" || !state.contract) {
-        throw new Error("Safety gate: a confirmed Remedy Contract is required.");
+      if (state.status !== "RECALL_CONFIRMED" || !state.contract || !contractIsGoverned(state.contract)) {
+        throw new Error("Safety gate: a confirmed governed Remedy Contract is required.");
       }
       const actions: AgentAction[] = [
         { id: "inspect", tool: "inspect_remedy_contract", title: "Contract inspected", detail: "Authority, exact match, remedy, and allowed action verified.", status: "COMPLETE", boundary: "DETERMINISTIC" },
@@ -165,8 +217,8 @@ export function workflowReducer(state: DemoState, command: WorkflowCommand): Dem
         ],
       };
     case "SUBMIT_SANDBOX": {
-      if (state.status !== "REMEDIATING" || !state.contract || !state.evidenceFile) {
-        throw new Error("Sandbox submission requires a contract and physical evidence.");
+      if (state.status !== "REMEDIATING" || !state.contract || !state.evidenceFile || !contractIsGoverned(state.contract)) {
+        throw new Error("Sandbox submission requires a governed contract and physical evidence.");
       }
       const receipt = `RZ-${stableIdempotencyKey(state.contract.id, "submit").slice(0, 10).toUpperCase()}`;
       const existing = state.timeline.find((item) => item.receipt === receipt);
@@ -185,8 +237,12 @@ export function workflowReducer(state: DemoState, command: WorkflowCommand): Dem
       };
     }
     case "CONFIRM_PROVIDER":
-      if (state.status !== "AWAITING_PROVIDER" || !command.confirmation.trim()) {
-        throw new Error("A provider outcome may only follow a sandbox submission.");
+      if (
+        state.status !== "AWAITING_PROVIDER" ||
+        !state.contract ||
+        !providerConfirmationMatches(state.contract, command.confirmation)
+      ) {
+        throw new Error("Provider confirmation must be the contract-bound sandbox outcome.");
       }
       return {
         ...state,
@@ -201,8 +257,13 @@ export function workflowReducer(state: DemoState, command: WorkflowCommand): Dem
         ],
       };
     case "VERIFY_COMPLETION":
-      if (state.status !== "AWAITING_PROVIDER" || !state.providerConfirmation || !state.evidenceFile) {
-        throw new Error("Completion requires both physical evidence and provider confirmation.");
+      if (
+        state.status !== "AWAITING_PROVIDER" ||
+        !state.contract ||
+        !state.evidenceFile ||
+        !providerConfirmationMatches(state.contract, state.providerConfirmation)
+      ) {
+        throw new Error("Completion requires physical evidence and a contract-bound provider confirmation.");
       }
       return {
         ...state,
