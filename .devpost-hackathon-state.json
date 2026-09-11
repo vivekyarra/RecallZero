@@ -1,0 +1,45 @@
+{
+  "plugin": "devpost-hackathon",
+  "version": 2,
+  "hackathon": {
+    "slug": "agentsforhumans",
+    "name": "Agents for Humans Hackathon",
+    "url": "https://agentsforhumans.devpost.com",
+    "selected": true,
+    "source": "known"
+  },
+  "participant": {
+    "name": "",
+    "display_name": "Vivek Yarra"
+  },
+  "project": {
+    "name": "RecallZero",
+    "summary": "An autonomous product-safety agent that identifies owned products, verifies exact CPSC recall matches, and completes remedy workflows through verified resolution.",
+    "ai_usage": "Strands agents interpret authoritative recall records and plan governed actions behind deterministic identity and completion gates.",
+    "codex_usage": "Codex is used to scope, implement, test, verify, and prepare the submission in a fresh repository during the competition period."
+  },
+  "current_stage": "resources",
+  "completed_stages": [
+    "start-hackathon",
+    "review",
+    "resources"
+  ],
+  "rules_acknowledged": true,
+  "learning": {
+    "status": "active",
+    "current_step": "checklist",
+    "completed_steps": [
+      "onboard",
+      "scope",
+      "prd",
+      "spec"
+    ],
+    "plan_file": "docs/hackathon-build/scope.md",
+    "checklist_file": "docs/hackathon-build/checklist.md"
+  },
+  "submission": {
+    "draft_file": "devpost-submission.md",
+    "status": "not-started"
+  },
+  "next_command": "build-project"
+}

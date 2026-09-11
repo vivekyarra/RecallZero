@@ -1,0 +1,26 @@
+flowchart LR
+  A[Receipt / manual product] --> B[Ownership ingestion]
+  B --> C[(Asset Passport)]
+  D[Official CPSC REST API] --> E[Deterministic identity gate]
+  C --> E
+  E -->|No / possible match| F[Protected or request evidence]
+  E -->|Exact match only| G[Immutable Remedy Contract]
+  G --> H[Strands Remedy Agent]
+  H --> I[Allowlisted tools]
+  I --> J[Manufacturer Sandbox]
+  I --> K[Human physical-action gate]
+  K --> I
+  J --> L[Provider confirmation]
+  L --> M[Deterministic outcome verifier]
+  M --> N[REMEDIATED]
+
+  subgraph AWS
+    H
+    O[Amazon Bedrock]
+    P[AgentCore Runtime]
+    Q[CloudWatch traces]
+    H --- O
+    H --- P
+    P --- Q
+  end
+

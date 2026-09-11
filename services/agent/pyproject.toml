@@ -1,0 +1,18 @@
+[project]
+name = "recallzero-agent"
+version = "0.1.0"
+description = "Governed Strands remedy agent for RecallZero"
+requires-python = ">=3.11"
+dependencies = [
+  "bedrock-agentcore==1.22.0",
+  "pydantic>=2.11,<3",
+  "strands-agents==1.55.1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.4,<9"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
