@@ -11,69 +11,74 @@
 
 ## Checklist
 
-- [ ] **1. Initialize the fresh licensed monorepo**
+- [x] **1. Initialize the fresh licensed monorepo**
   Spec ref: `spec.md > Stack`
-  What to build: Git repository, Next.js/TypeScript foundation, Python agent package, environment examples, MIT license, and quality scripts.
-  Acceptance: The project is demonstrably new, installs cleanly, exposes no secrets, and has repeatable commands.
-  Verify: `git status`, dependency installation, and secret-pattern scan.
+  Delivered: Git repository, Next.js/TypeScript foundation, Python agent package, environment examples, MIT license, and repeatable quality scripts.
+  Verified: dependency installation, secret-pattern scan, and clean release CI.
 
-- [ ] **2. Build the deterministic safety kernel**
+- [x] **2. Build the deterministic safety kernel**
   Spec ref: `spec.md > Deterministic safety kernel`
-  What to build: Typed asset/recall/contract/workflow models, exact-match policy, state transitions, idempotency, official fixture, and unit tests.
-  Acceptance: Exact, possible, and no-match paths plus completion invariants are proven.
-  Verify: `npm test` focused domain suite.
+  Delivered: Typed asset/recall/contract/workflow models, deterministic exact-match policy, state transitions, idempotency, official fixture, and adversarial tests.
+  Verified: exact/possible/no-match paths, forged exact-match rejection, persisted-state validation, and completion invariants.
 
-- [ ] **3. Integrate the official CPSC recall source**
+- [x] **3. Integrate the official CPSC recall source**
   Spec ref: `spec.md > Components And Responsibilities > CPSC client`
-  What to build: Validated live API client, bounded timeout, relevant-record selection, provenance, and snapshot fallback.
-  Acceptance: Current official data is retrieved when available; failure never masquerades as live.
-  Verify: Integration test plus a live read command.
+  Delivered: Validated live API client, bounded timeout, relevant-record selection, provenance, and explicitly labeled official snapshot fallback.
+  Verified: live/snapshot behavior does not misrepresent fallback data as live.
 
-- [ ] **4. Implement the Strands and AgentCore runtime**
+- [x] **4. Implement the Strands and AgentCore-compatible runtime**
   Spec ref: `spec.md > Strands remedy runtime`
-  What to build: Governed tools, system policy, runtime entrypoint, local API, common action schema, and safety tests.
-  Acceptance: Genuine Strands imports/tools execute locally; unverified contracts and illegal transitions are rejected.
-  Verify: Python install, `pytest`, import/runtime smoke test, and AgentCore packaging check.
+  Delivered: Genuine Strands `Agent`, `BedrockModel`, native governed tools, structured `ToolResult` JSON, runtime entrypoint, common action schema, and safety tests.
+  Verified: CI constructs the real Strands Agent without cloud credentials, checks the exact allowlist, and executes a registered governed tool through the SDK boundary.
+  Note: AgentCore deployment is intentionally not claimed without verified AWS deployment evidence.
 
-- [ ] **5. Build the manufacturer remedy sandbox**
+- [x] **5. Build the manufacturer remedy sandbox**
   Spec ref: `spec.md > Manufacturer remedy sandbox`
-  What to build: Controlled form/action simulation, stable receipts, physical evidence gate, outcome advancement, and sandbox labeling.
-  Acceptance: No external manufacturer request exists; duplicate calls are idempotent.
-  Verify: API/unit tests and hostname scan.
+  Delivered: Controlled action simulation, stable contract-bound completion proof, physical evidence gate, outcome advancement, and sandbox labeling.
+  Verified: arbitrary/forged provider confirmations, cross-contract confirmations, duplicate calls, and illegal completion attempts are rejected.
 
-- [ ] **6. Build the calm product dashboard**
+- [x] **6. Build the calm product dashboard**
   Spec ref: `spec.md > Web experience`
-  What to build: Responsive home, Asset Passport, protected counts, unresolved/remediating/resolved cards, source badges, and navigation.
-  Acceptance: First load communicates the promise in under ten seconds and avoids dashboard clutter/chat UI.
-  Verify: Production build and browser render at desktop/mobile sizes.
+  Delivered: Responsive home, Asset Passport, protected counts, unresolved/remediating/resolved states, provenance/source badges, and navigation.
+  Verified: production build and browser review at desktop and mobile sizes.
 
-- [ ] **7. Build the end-to-end judge demo workflow**
+- [x] **7. Build the end-to-end judge demo workflow**
   Spec ref: `spec.md > Demo And Submission Flow`
-  What to build: Receipt import, recall check, evidence table, Remedy Contract, agent trace, physical handoff upload, approval, remediation, persistence, and reset.
-  Acceptance: The complete scripted path reaches remediated only with required evidence and confirmation.
-  Verify: Playwright/browser automation of every click and state assertion.
+  Delivered: Receipt import, recall check, evidence table, Remedy Contract, agent trace, physical handoff evidence, sandbox approval, remediation, persistence, and reset.
+  Verified: Playwright judge flow repeated three times on Desktop Chrome and Pixel 7 in CI.
 
-- [ ] **8. Add architecture, observability, and evidence surfaces**
+- [x] **8. Add architecture, observability, and evidence surfaces**
   Spec ref: `spec.md > Architecture`
-  What to build: In-app architecture/safety views, structured run events, Mermaid source, and required PNG/PDF architecture export.
-  Acceptance: Judges can distinguish authoritative, deterministic, agentic, sandbox, and human responsibilities.
-  Verify: Diagram render, link check, and browser inspection.
+  Delivered: In-app architecture/safety views, structured run events, committed architecture source, and submission-ready PNG/PDF exports.
+  Verified: architecture render/preflight and browser inspection distinguish authoritative, deterministic, agentic, sandbox, and human responsibilities.
 
-- [ ] **9. Harden and verify the full repository**
+- [x] **9. Harden and verify the full repository**
   Spec ref: `spec.md > Risks And Verification`
-  What to build: Accessibility, responsive polish, error boundaries, lint/type/test/build scripts, security checks, and truthful mode reporting.
-  Acceptance: One command verifies JS, Python, build, and critical boundary scans.
-  Verify: `npm run verify` plus browser console/network inspection.
+  Delivered: responsive polish, error handling, lint/type/test/build scripts, security checks, truthful mode reporting, and adversarial stress coverage.
+  Verified: final `main` CI passes lint, typecheck, JS tests, secret scanning, high-severity production dependency audit, production build, Python tests, real Strands boundary test, and repeated browser E2E.
 
 - [ ] **10. Deploy and prove public/runtime behavior**
   Spec ref: `spec.md > Stack`
-  What to build: Public web deployment and, if AWS credentials can be established, AgentCore Runtime deployment with invocation evidence.
-  Acceptance: Anonymous/incognito web flow works; AgentCore claims are made only with ARN/log/invocation proof.
-  Verify: Public URL readback, browser E2E, and AgentCore invocation output when available.
+  Engineering status: local/CI runtime is verified. Public Vercel deployment and optional AgentCore deployment require external account authorization.
+  Acceptance before claiming deployment: anonymous/incognito public web flow works; AgentCore is claimed only with ARN/log/invocation proof.
 
-- [ ] **11. Prepare Devpost handoff**
+- [x] **11. Prepare Devpost handoff**
   Spec ref: `prd.md > Submission Proof Points`
-  What to build: Judge-grade README, architecture asset, exact five-minute video script, screenshot shot list, builder.aws draft, testing instructions, and Devpost draft.
-  Acceptance: All required fields have honest copy or clearly named human/external TODOs; no submission is sent.
-  Verify: Requirements matrix review and confirm the next command is `$prepare-submission`.
+  Delivered: judge-grade README, architecture asset/source, exact five-minute video script, screenshot evidence, Builder.aws draft, testing instructions, and polished Devpost project write-up.
+  Verified: current hackathon requirements and judging criteria were re-checked on 2026-09-11.
+  Note: final submission remains intentionally pending until the required owner-provided fields, architecture upload, and public video URL are present.
 
+## Final external owner actions
+
+These are not engineering blockers and must not be fabricated by the project or agent:
+
+- [ ] Add GitHub About description/topics and enable suitable `main` branch protection/status checks.
+- [ ] Ensure the MIT license is visible in GitHub repository metadata/About.
+- [ ] Authorize GitHub import in Vercel, deploy RecallZero, and verify the public URL anonymously.
+- [ ] Optional but score-positive: deploy the Strands runtime to Amazon Bedrock AgentCore and retain ARN/log/invocation evidence.
+- [ ] Record and publish the prepared demo as a public YouTube/Vimeo video, maximum 5 minutes.
+- [ ] Upload the architecture diagram to the Devpost required architecture field.
+- [ ] Provide Devpost Submitter Type, Country of Residence, AWS Builder ID, and select **Everyday Agents**.
+- [ ] Add the public GitHub repo URL and, if available, the Vercel live-demo URL to Devpost.
+- [ ] Optional bonus: publish the prepared Builder.aws article with **Agents for Humans** in the title and add its public URL.
+- [ ] Submit the project to the hackathon only after all required fields and deliverables above are present.
