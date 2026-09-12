@@ -32,7 +32,10 @@ The model may interpret an already verified remedy, sequence allowlisted tools, 
 
 ![RecallZero architecture](docs/architecture/recallzero-architecture.svg)
 
-Architecture source: [`recallzero-architecture.mmd`](docs/architecture/recallzero-architecture.mmd). Submission-ready PNG and PDF exports are generated and visually preflighted from the same architecture.
+Architecture source: [`recallzero-architecture.mmd`](docs/architecture/recallzero-architecture.mmd).
+High-resolution exports for judges:
+- [Architecture PNG (1800x1050)](docs/architecture/recallzero-architecture.png)
+- [Architecture PDF](docs/architecture/recallzero-architecture.pdf)
 
 ## Strands and AWS
 
@@ -42,7 +45,8 @@ Architecture source: [`recallzero-architecture.mmd`](docs/architecture/recallzer
 - `strands.models.BedrockModel` for the Amazon Bedrock target;
 - `BedrockAgentCoreApp` as the AgentCore-compatible runtime entrypoint;
 - deterministic policy code that can be exercised without AWS credentials;
-- an explicit `RECALLZERO_DETERMINISTIC_DEMO=1` mode that never pretends cloud execution occurred.
+- an explicit `RECALLZERO_DETERMINISTIC_DEMO=1` mode that never pretends cloud execution occurred;
+- verifiable runtime trace evidence: [`docs/evidence/strands-runtime-verification.md`](docs/evidence/strands-runtime-verification.md) (with raw trace at [`docs/evidence/strands-agent-execution-trace.json`](docs/evidence/strands-agent-execution-trace.json)).
 
 AgentCore deployment is a production target and is **not claimed as deployed** unless a real AWS invocation has been verified.
 

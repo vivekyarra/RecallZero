@@ -26,7 +26,7 @@ import { workflowReducer } from "@/lib/domain/workflow";
 const STORAGE_KEY = "recallzero-demo-v1";
 
 function sourceLabel(recall: RecallRecord | null) {
-  return recall?.sourceMode === "LIVE_CPSC" ? "LIVE CPSC" : "OFFICIAL SNAPSHOT";
+  return recall?.sourceMode === "LIVE_CPSC" ? "LIVE CPSC API" : "OFFICIAL CPSC SNAPSHOT (#26-754)";
 }
 
 function displayStatus(status: DemoState["status"]) {
@@ -260,7 +260,38 @@ function WorkflowIntro({ busy, onRun }: { busy: boolean; onRun: () => void }) {
 }
 
 function RecallConfirmed({ state, busy, onStart }: { state: DemoState; busy: boolean; onStart: () => void }) {
-  return <div className="recallConfirmed"><div className="alertHead"><div className="hazardIcon"><Warning weight="fill" /></div><div><p>RECALL CONFIRMED</p><h2>ELECTROCUTION · SHOCK · BURN</h2></div><span>{sourceLabel(state.recall)}</span></div><p className="stopUsing">STOP USING AND UNPLUG IMMEDIATELY</p><div className="evidenceTable">{state.match?.evidence.map((item) => <div key={item.field}><span>{item.label}</span><b>{item.assetValue}</b><strong><Check weight="bold" /> MATCH</strong></div>)}</div><div className="official"><p><b>CPSC #{state.recall?.recallNumber}</b> · Full refund</p><a href={state.recall?.url} target="_blank" rel="noreferrer">Open official record <LinkSimple /></a></div><button className="primary dangerButton" onClick={onStart} disabled={busy}>{busy ? "Opening governed workflow…" : "Let RecallZero handle it"}<ArrowRight weight="bold" /></button></div>;
+  const isLive = state.recall?.sourceMode === "LIVE_CPSC";
+  return (
+    <div className="recallConfirmed">
+      <div className="alertHead">
+        <div className="hazardIcon"><Warning weight="fill" /></div>
+        <div>
+          <p>RECALL CONFIRMED</p>
+          <h2>ELECTROCUTION · SHOCK · BURN</h2>
+        </div>
+        <span style={{ background: isLive ? "var(--mint)" : "#fef3c7", color: isLive ? "var(--green)" : "#92400e", border: `1px solid ${isLive ? "var(--green)" : "#f59e0b"}`, fontWeight: 700 }}>
+          {sourceLabel(state.recall)}
+        </span>
+      </div>
+      <p className="stopUsing">STOP USING AND UNPLUG IMMEDIATELY</p>
+      <div className="evidenceTable">
+        {state.match?.evidence.map((item) => (
+          <div key={item.field}>
+            <span>{item.label}</span>
+            <b>{item.assetValue}</b>
+            <strong><Check weight="bold" /> MATCH</strong>
+          </div>
+        ))}
+      </div>
+      <div className="official">
+        <p><b>CPSC #{state.recall?.recallNumber}</b> · Full refund</p>
+        <a href={state.recall?.url} target="_blank" rel="noreferrer">Open official record <LinkSimple /></a>
+      </div>
+      <button className="primary dangerButton" onClick={onStart} disabled={busy}>
+        {busy ? "Opening governed workflow…" : "Let RecallZero handle it"}<ArrowRight weight="bold" />
+      </button>
+    </div>
+  );
 }
 
 function HumanGate({ state, onEvidence }: { state: DemoState; onEvidence: () => void }) {
@@ -292,5 +323,69 @@ function ArchitectureView({ onClose }: { onClose: () => void }) {
     { icon: <Lightning />, title: "Remedy agent", body: "Strands plans and calls narrow tools from an immutable contract.", tag: "AGENTCORE READY" },
     { icon: <ShieldCheck />, title: "Outcome verify", body: "Evidence plus provider confirmation are required to close.", tag: "NON-BYPASSABLE" },
   ];
-  return <main className="shell architecturePage"><header className="topbar"><button className="wordmark" onClick={onClose}><span className="mark"><ShieldCheck weight="fill" /></span>RECALL<span>ZERO</span></button><button className="secondary small" onClick={onClose}>Back to household</button></header><section className="architectureHero"><p className="eyebrow"><LockKey weight="fill" /> Authority before autonomy</p><h1>The model can plan.<br /><em>It cannot rewrite truth.</em></h1><p>RecallZero separates official facts, deterministic identity, agentic execution, human physical work, and verified outcomes.</p></section><section className="architectureFlow">{layers.map((layer, index) => <article key={layer.title}><div className="layerNumber">0{index + 1}</div><div className="layerIcon">{layer.icon}</div><div><small>{layer.tag}</small><h2>{layer.title}</h2><p>{layer.body}</p></div>{index < layers.length - 1 && <ArrowRight className="flowArrow" />}</article>)}</section><section className="permissionGrid"><div className="can"><h2>THE AGENT CAN</h2><ul><li><Check /> Interpret a verified remedy</li><li><Check /> Choose allowlisted tools</li><li><Check /> Prepare sandbox forms</li><li><Check /> Follow up on outcomes</li></ul></div><div className="cannot"><h2>THE AGENT CANNOT</h2><ul><li><X /> Invent or confirm a recall</li><li><X /> Override official instructions</li><li><X /> Contact real manufacturers in demo</li><li><X /> Mark itself remediated</li></ul></div></section><footer><span>Strands Agents SDK · Amazon Bedrock AgentCore-ready runtime</span><span><LockKey weight="fill" /> Safety is architecture, not a prompt.</span></footer></main>;
+  return (
+    <main className="shell architecturePage">
+      <header className="topbar">
+        <button className="wordmark" onClick={onClose}><span className="mark"><ShieldCheck weight="fill" /></span>RECALL<span>ZERO</span></button>
+        <button className="secondary small" onClick={onClose}>Back to household</button>
+      </header>
+      <section className="architectureHero">
+        <p className="eyebrow"><LockKey weight="fill" /> Authority before autonomy</p>
+        <h1>The model can plan.<br /><em>It cannot rewrite truth.</em></h1>
+        <p>RecallZero separates official facts, deterministic identity, agentic execution, human physical work, and verified outcomes.</p>
+        <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "24px", flexWrap: "wrap" }}>
+          <a href="/recallzero-architecture.png" download className="secondary small" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            <FileArrowUp weight="bold" /> Download Architecture PNG (1800x1050)
+          </a>
+          <a href="/recallzero-architecture.pdf" download className="secondary small" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            <FileArrowUp weight="bold" /> Download Architecture PDF
+          </a>
+        </div>
+      </section>
+
+      <section style={{ margin: "28px 0", background: "var(--card)", border: "1px solid var(--line)", borderRadius: "20px", padding: "18px", boxShadow: "var(--shadow)", textAlign: "center", overflow: "hidden" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/recallzero-architecture.svg" alt="RecallZero Architecture Diagram" style={{ maxWidth: "100%", height: "auto", borderRadius: "10px" }} />
+      </section>
+
+      <section className="architectureFlow">
+        {layers.map((layer, index) => (
+          <article key={layer.title}>
+            <div className="layerNumber">0{index + 1}</div>
+            <div className="layerIcon">{layer.icon}</div>
+            <div>
+              <small>{layer.tag}</small>
+              <h2>{layer.title}</h2>
+              <p>{layer.body}</p>
+            </div>
+            {index < layers.length - 1 && <ArrowRight className="flowArrow" />}
+          </article>
+        ))}
+      </section>
+      <section className="permissionGrid">
+        <div className="can">
+          <h2>THE AGENT CAN</h2>
+          <ul>
+            <li><Check /> Interpret a verified remedy</li>
+            <li><Check /> Choose allowlisted tools</li>
+            <li><Check /> Prepare sandbox forms</li>
+            <li><Check /> Follow up on outcomes</li>
+          </ul>
+        </div>
+        <div className="cannot">
+          <h2>THE AGENT CANNOT</h2>
+          <ul>
+            <li><X /> Invent or confirm a recall</li>
+            <li><X /> Override official instructions</li>
+            <li><X /> Contact real manufacturers in demo</li>
+            <li><X /> Mark itself remediated</li>
+          </ul>
+        </div>
+      </section>
+      <footer>
+        <span>Strands Agents SDK (v1.55.1) · Amazon Bedrock AgentCore runtime</span>
+        <span><LockKey weight="fill" /> Safety is architecture, not a prompt.</span>
+      </footer>
+    </main>
+  );
 }

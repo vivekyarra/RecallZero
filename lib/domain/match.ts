@@ -12,8 +12,14 @@ const includesNormalized = (haystack: string, needle: string) =>
   normalize(haystack).includes(normalize(needle));
 
 function purchaseWindowMatches(asset: AssetPassport, recall: RecallRecord): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(asset.purchasedAt)) return false;
+  const [y, m, d] = asset.purchasedAt.split("-").map(Number);
   const date = new Date(`${asset.purchasedAt}T00:00:00Z`);
   if (Number.isNaN(date.getTime())) return false;
+  // Prevent calendar rollovers (e.g., Feb 30 wrapping into March)
+  if (date.getUTCFullYear() !== y || date.getUTCMonth() + 1 !== m || date.getUTCDate() !== d) {
+    return false;
+  }
   const text = normalize([recall.description, ...recall.retailers].join(" "));
   if (text.includes("february 2026 through march 2026")) {
     return date >= new Date("2026-02-01T00:00:00Z") && date <= new Date("2026-03-31T23:59:59Z");

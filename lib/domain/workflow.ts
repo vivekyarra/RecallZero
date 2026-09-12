@@ -64,6 +64,7 @@ const providerConfirmationMatches = (
 
 const contractIsGoverned = (contract: RemedyContract | null) => Boolean(
   contract &&
+  contract.id === `rc-${contract.recallNumber}-${contract.assetId}` &&
   contract.authority === "US CPSC" &&
   contract.matchStatus === "EXACT_MATCH" &&
   contract.agentAuthority === "SANDBOX_ROUTINE_REMEDY_ONLY" &&

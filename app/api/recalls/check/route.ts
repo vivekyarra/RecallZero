@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getXr8801Recall } from "@/lib/server/cpsc";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export async function GET() {
   const result = await getXr8801Recall();

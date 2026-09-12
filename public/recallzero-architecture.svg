@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1050" viewBox="0 0 1800 1050" role="img" aria-labelledby="title desc">
+  <title id="title">RecallZero governed autonomous recall remediation architecture</title>
+  <desc id="desc">Ownership evidence and official CPSC data pass through deterministic identity gates before a Strands Remedy Agent can use allowlisted tools. Physical work remains human-gated and completion requires provider confirmation.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#286246"/></marker>
+  </defs>
+  <rect width="1800" height="1050" fill="#F4F2EA"/>
+  <text x="80" y="105" font-family="Arial,sans-serif" font-size="54" font-weight="700" fill="#171916">RecallZero - governed autonomous recall remediation</text>
+  <text x="82" y="155" font-family="Arial,sans-serif" font-size="22" fill="#286246">Authority before autonomy: official facts + deterministic gates + Strands execution</text>
+
+  <g fill="none" stroke="#286246" stroke-width="6" marker-end="url(#arrow)">
+    <path d="M430 337H495"/><path d="M850 337H915"/><path d="M1270 337H1335"/>
+    <path d="M1515 445V550"/><path d="M1340 662H1275"/><path d="M920 662H855"/><path d="M500 662H435"/>
+  </g>
+
+  <g font-family="Arial,sans-serif">
+    <g transform="translate(80 230)"><rect width="350" height="215" rx="28" fill="#FFFEFA" stroke="#BFC3B9" stroke-width="4"/><text x="24" y="53" font-size="27" font-weight="700" fill="#171916">1. Ownership</text><text x="24" y="98" font-size="20" fill="#171916">Synthetic receipt / manual entry</text><rect x="24" y="165" width="302" height="32" rx="12" fill="#DCE9DF"/><text x="34" y="187" font-size="14" fill="#286246">Asset Passport</text></g>
+    <g transform="translate(500 230)"><rect width="350" height="215" rx="28" fill="#FFFEFA" stroke="#286246" stroke-width="4"/><text x="24" y="53" font-size="27" font-weight="700" fill="#171916">2. Authority</text><text x="24" y="98" font-size="20" fill="#171916">Official US CPSC REST API</text><rect x="24" y="165" width="302" height="32" rx="12" fill="#DCE9DF"/><text x="34" y="187" font-size="14" fill="#286246">Live data or labeled snapshot</text></g>
+    <g transform="translate(920 230)"><rect width="350" height="215" rx="28" fill="#FFFEFA" stroke="#286246" stroke-width="4"/><text x="24" y="53" font-size="27" font-weight="700" fill="#171916">3. Identity gate</text><text x="24" y="98" font-size="20" fill="#171916">Model + retailer + purchase window</text><rect x="24" y="165" width="302" height="32" rx="12" fill="#DCE9DF"/><text x="34" y="187" font-size="13" fill="#286246">Deterministic EXACT / POSSIBLE / NO MATCH</text></g>
+    <g transform="translate(1340 230)"><rect width="350" height="215" rx="28" fill="#FFFEFA" stroke="#286246" stroke-width="4"/><text x="24" y="53" font-size="27" font-weight="700" fill="#171916">4. Remedy Contract</text><text x="24" y="98" font-size="20" fill="#171916">Immutable verified instructions</text><rect x="24" y="165" width="302" height="32" rx="12" fill="#DCE9DF"/><text x="34" y="187" font-size="14" fill="#286246">Only exact matches can proceed</text></g>
+    <g transform="translate(1340 555)"><rect width="350" height="215" rx="28" fill="#FFFEFA" stroke="#286246" stroke-width="4"/><text x="24" y="53" font-size="24" font-weight="700" fill="#171916">5. Strands Remedy Agent</text><text x="24" y="98" font-size="20" fill="#171916">Allowlisted narrow tools</text><rect x="24" y="165" width="302" height="32" rx="12" fill="#DCE9DF"/><text x="34" y="187" font-size="14" fill="#286246">Bedrock / AgentCore-ready runtime</text></g>
+    <g transform="translate(920 555)"><rect width="350" height="215" rx="28" fill="#FFFEFA" stroke="#BFC3B9" stroke-width="4"/><text x="24" y="53" font-size="27" font-weight="700" fill="#171916">6. Human physical gate</text><text x="24" y="98" font-size="20" fill="#171916">Only unavoidable physical action</text><rect x="24" y="165" width="302" height="32" rx="12" fill="#DCE9DF"/><text x="34" y="187" font-size="14" fill="#286246">Prepared synthetic proof in judge demo</text></g>
+    <g transform="translate(500 555)"><rect width="350" height="215" rx="28" fill="#FFFEFA" stroke="#BFC3B9" stroke-width="4"/><text x="24" y="53" font-size="27" font-weight="700" fill="#171916">7. Manufacturer sandbox</text><text x="24" y="98" font-size="20" fill="#171916">Idempotent controlled submission</text><rect x="24" y="165" width="302" height="32" rx="12" fill="#DCE9DF"/><text x="34" y="187" font-size="14" fill="#286246">No real manufacturer contacted</text></g>
+    <g transform="translate(80 555)"><rect width="350" height="215" rx="28" fill="#FFFEFA" stroke="#286246" stroke-width="4"/><text x="24" y="53" font-size="27" font-weight="700" fill="#171916">8. Outcome verifier</text><text x="24" y="98" font-size="20" fill="#171916">Evidence + provider confirmation</text><rect x="24" y="165" width="302" height="32" rx="12" fill="#DCE9DF"/><text x="34" y="187" font-size="14" fill="#286246">REMEDIATED only when both hold</text></g>
+  </g>
+
+  <rect x="80" y="900" width="1640" height="100" rx="22" fill="#171916"/>
+  <text x="110" y="943" font-family="Arial,sans-serif" font-size="26" font-weight="700" fill="white">Safety invariant</text>
+  <text x="345" y="943" font-family="Arial,sans-serif" font-size="17" fill="white">LLM never decides recall truth, bypasses physical evidence, contacts a real manufacturer in demo, or self-declares completion.</text>
+  <text x="110" y="980" font-family="Arial,sans-serif" font-size="16" fill="#DCE9DF">Everyday Agents | Agents for Humans Hackathon | Strands Agents SDK</text>
+</svg>
