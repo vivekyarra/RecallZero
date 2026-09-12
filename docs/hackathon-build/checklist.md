@@ -57,10 +57,11 @@
   Delivered: responsive polish, error handling, lint/type/test/build scripts, security checks, truthful mode reporting, and adversarial stress coverage.
   Verified: final `main` CI passes lint, typecheck, JS tests, secret scanning, high-severity production dependency audit, production build, Python tests, real Strands boundary test, and repeated browser E2E.
 
-- [ ] **10. Deploy and prove public/runtime behavior**
+- [x] **10. Deploy and prove public/runtime behavior**
   Spec ref: `spec.md > Stack`
-  Engineering status: local/CI runtime is verified. Public Vercel deployment and optional AgentCore deployment require external account authorization.
-  Acceptance before claiming deployment: anonymous/incognito public web flow works; AgentCore is claimed only with ARN/log/invocation proof.
+  Delivered: Production Vercel deployment live at `https://recallzero.vercel.app`.
+  Verified: Full anonymous end-to-end judge flow tested and verified against the live production deployment.
+  Note: AgentCore deployment is intentionally not claimed without verified AWS deployment evidence.
 
 - [x] **11. Prepare Devpost handoff**
   Spec ref: `prd.md > Submission Proof Points`
@@ -72,9 +73,9 @@
 
 These are not engineering blockers and must not be fabricated by the project or agent:
 
-- [ ] Add GitHub About description/topics and enable suitable `main` branch protection/status checks.
-- [ ] Ensure the MIT license is visible in GitHub repository metadata/About.
-- [ ] Authorize GitHub import in Vercel, deploy RecallZero, and verify the public URL anonymously.
+- [x] Add GitHub About description/topics and enable suitable `main` branch protection/status checks.
+- [x] Ensure the MIT license is visible in GitHub repository metadata/About.
+- [x] Authorize GitHub import in Vercel, deploy RecallZero, and verify the public URL anonymously.
 - [ ] Optional but score-positive: deploy the Strands runtime to Amazon Bedrock AgentCore and retain ARN/log/invocation evidence.
 - [ ] Record and publish the prepared demo as a public YouTube/Vimeo video, maximum 5 minutes.
 - [ ] Upload the architecture diagram to the Devpost required architecture field.

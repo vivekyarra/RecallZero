@@ -38,7 +38,7 @@ Connect real opt-in receipt sources, broaden deterministic matching across more 
 
 ## Links
 - Source: https://github.com/vivekyarra/RecallZero
-- Live demo: add after Vercel production deployment is verified
+- Live demo: https://recallzero.vercel.app
 - Demo video: add public YouTube/Vimeo URL before final submission
 - Builder.aws bonus post: publish the prepared article before the deadline
 

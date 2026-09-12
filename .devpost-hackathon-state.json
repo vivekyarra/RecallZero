@@ -46,6 +46,7 @@
     "devpost_project_id": 1424740,
     "devpost_project_slug": "recallzero-ue2p7g",
     "devpost_submission_id": 1178539,
+    "live_demo_url": "https://recallzero.vercel.app",
     "required_before_final": [
       "public demo video URL",
       "AWS Builder ID",
