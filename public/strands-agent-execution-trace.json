@@ -1,0 +1,160 @@
+{
+  "metadata": {
+    "runtime": "Strands Agents SDK (strands-agents 1.55.1)",
+    "framework": "Amazon Bedrock AgentCore compatible (bedrock-agentcore 1.22.0)",
+    "agent_class": "strands.Agent",
+    "model_adapter": "strands.models.BedrockModel",
+    "system_prompt": "You are RecallZero's governed Remedy Agent.\nYou receive an immutable Remedy Contract only after deterministic exact matching.\nUse the narrow tools to finish routine digital work around unavoidable human physical steps.\nYou MUST NOT invent a recall, alter official instructions, call a real manufacturer,\nbypass a missing-evidence gate, or declare completion without provider confirmation.\nEvery execution target is MANUFACTURER_SANDBOX. Return a concise JSON-compatible summary.",
+    "tool_allowlist": [
+      "check_sandbox_outcome",
+      "inspect_remedy_contract",
+      "prepare_sandbox_claim",
+      "request_physical_evidence",
+      "submit_sandbox_claim"
+    ],
+    "executed_at_utc": "2026-09-12T18:12:17.896188+00:00",
+    "completed_at_utc": "2026-09-12T18:12:17.911754+00:00",
+    "lifecycle_steps_executed": 7,
+    "verification_verdict": "VERIFIED_GOVERNED_EXECUTION"
+  },
+  "contract": {
+    "id": "rc-26754-asset-xr8801-demo",
+    "authority": "US CPSC",
+    "recallNumber": "26754",
+    "recallUrl": "https://www.cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
+    "hazard": "The recalled hair dryer brushes can present a risk of death or serious injury from electrocution or shock and can overheat, posing a burn hazard.",
+    "officialAction": "Consumers should unplug and stop using the recalled hair dryers immediately and contact Guang Zhou to receive a full refund. Consumers will be asked to cut the power cord and provide a photo of the destroyed product to wantefully@163.com.",
+    "remedy": "FULL_REFUND",
+    "provider": "Guang Zhou",
+    "requiredEvidence": [
+      "Photo of disabled product with cut power cord"
+    ],
+    "completionCondition": "Both consumer physical evidence and provider approval must be verified.",
+    "agentAuthority": "SANDBOX_ROUTINE_REMEDY_ONLY",
+    "matchStatus": "EXACT_MATCH"
+  },
+  "events": [
+    {
+      "step": 1,
+      "tool": "inspect_remedy_contract",
+      "actor": "STRANDS_AGENTS_SDK",
+      "status": "success",
+      "input": {
+        "contract_id": "rc-26754-asset-xr8801-demo",
+        "recallNumber": "26754"
+      },
+      "output": {
+        "verified": true,
+        "contract_id": "rc-26754-asset-xr8801-demo",
+        "authority": "US CPSC",
+        "match": "EXACT_MATCH",
+        "scope": "SANDBOX_ROUTINE_REMEDY_ONLY"
+      },
+      "governance_check": "Deterministic contract binding and schema invariant passed"
+    },
+    {
+      "step": 2,
+      "tool": "prepare_sandbox_claim",
+      "actor": "STRANDS_AGENTS_SDK",
+      "status": "success",
+      "input": {
+        "contract_id": "rc-26754-asset-xr8801-demo"
+      },
+      "output": {
+        "prepared": true,
+        "environment": "MANUFACTURER_SANDBOX",
+        "contract_id": "rc-26754-asset-xr8801-demo",
+        "fields": [
+          "recall_number",
+          "product_model",
+          "contact",
+          "evidence"
+        ]
+      },
+      "governance_check": "Target strictly bounded to MANUFACTURER_SANDBOX (no external traffic)"
+    },
+    {
+      "step": 3,
+      "tool": "request_physical_evidence",
+      "actor": "STRANDS_AGENTS_SDK",
+      "status": "success",
+      "input": {
+        "contract_id": "rc-26754-asset-xr8801-demo"
+      },
+      "output": {
+        "state": "NEEDS_HUMAN",
+        "instruction": "Consumers should unplug and stop using the recalled hair dryers immediately and contact Guang Zhou to receive a full refund. Consumers will be asked to cut the power cord and provide a photo of the destroyed product to wantefully@163.com.",
+        "warning": "Keep the product unplugged. Demo evidence must be synthetic."
+      },
+      "governance_check": "Agent blocked: human physical gate strictly enforced (unplugged + cut cord photo)"
+    },
+    {
+      "step": 4,
+      "tool": "submit_sandbox_claim",
+      "actor": "STRANDS_AGENTS_SDK",
+      "status": "success",
+      "input": {
+        "contract_id": "rc-26754-asset-xr8801-demo",
+        "evidence_filename": "synthetic-xr8801-disabled.jpg"
+      },
+      "output": {
+        "accepted": true,
+        "environment": "MANUFACTURER_SANDBOX",
+        "receipt": "RZ-B4546D7F8F",
+        "state": "AWAITING_PROVIDER"
+      },
+      "governance_check": "Idempotent submission key generated; state transitions to AWAITING_PROVIDER (submission != completion)"
+    },
+    {
+      "step": 5,
+      "substep": "5a_unconfirmed",
+      "tool": "check_sandbox_outcome",
+      "actor": "STRANDS_AGENTS_SDK",
+      "status": "success",
+      "input": {
+        "contract_id": "rc-26754-asset-xr8801-demo",
+        "provider_confirmation": null
+      },
+      "output": {
+        "state": "AWAITING_PROVIDER",
+        "verified": false,
+        "provider_confirmation": null
+      },
+      "governance_check": "Self-declaration of completion rejected; provider confirmation is mandatory"
+    },
+    {
+      "step": 5,
+      "substep": "5b_adversarial_rejection",
+      "tool": "check_sandbox_outcome",
+      "actor": "STRANDS_AGENTS_SDK",
+      "status": "success",
+      "input": {
+        "contract_id": "rc-26754-asset-xr8801-demo",
+        "provider_confirmation": "FORGED-TOKEN-12345"
+      },
+      "output": {
+        "state": "AWAITING_PROVIDER",
+        "verified": false,
+        "provider_confirmation": null
+      },
+      "governance_check": "Adversarial signature rejection: forged tokens fail constant-time HMAC comparison"
+    },
+    {
+      "step": 5,
+      "substep": "5c_verified_resolution",
+      "tool": "check_sandbox_outcome",
+      "actor": "STRANDS_AGENTS_SDK",
+      "status": "success",
+      "input": {
+        "contract_id": "rc-26754-asset-xr8801-demo",
+        "provider_confirmation": "SBX-BEEEDE58026B5C73DE72BF70"
+      },
+      "output": {
+        "state": "REMEDIATED",
+        "verified": true,
+        "provider_confirmation": "SBX-BEEEDE58026B5C73DE72BF70"
+      },
+      "governance_check": "Outcome verified: both physical evidence and provider confirmation present -> REMEDIATED"
+    }
+  ]
+}
