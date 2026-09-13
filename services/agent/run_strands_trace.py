@@ -80,7 +80,7 @@ def generate_strands_execution_trace():
         "status": t3_result["status"],
         "input": {"contract_id": OFFICIAL_CONTRACT["id"]},
         "output": t3_json,
-        "governance_check": "Agent blocked: human physical gate strictly enforced (unplugged + cut cord photo)",
+        "governance_check": "Tool returned NEEDS_HUMAN; physical evidence is required before sandbox submission",
     })
 
     # Step 4: submit_sandbox_claim with synthetic evidence
@@ -100,7 +100,7 @@ def generate_strands_execution_trace():
     })
 
     # Step 5a: check_sandbox_outcome before provider approval
-    t5a_result = agent.tool.check_sandbox_outcome(contract=OFFICIAL_CONTRACT, provider_confirmation=None)
+    t5a_result = agent.tool.check_sandbox_outcome(contract=OFFICIAL_CONTRACT, provider_confirmation=None, evidence_filename=evidence_file)
     t5a_json = next(item["json"] for item in t5a_result["content"] if "json" in item)
     assert t5a_json["verified"] is False
     assert t5a_json["state"] == "AWAITING_PROVIDER"
@@ -110,13 +110,13 @@ def generate_strands_execution_trace():
         "tool": "check_sandbox_outcome",
         "actor": "STRANDS_AGENTS_SDK",
         "status": t5a_result["status"],
-        "input": {"contract_id": OFFICIAL_CONTRACT["id"], "provider_confirmation": None},
+        "input": {"contract_id": OFFICIAL_CONTRACT["id"], "provider_confirmation": None, "evidence_filename": evidence_file},
         "output": t5a_json,
         "governance_check": "Self-declaration of completion rejected; provider confirmation is mandatory",
     })
 
     # Step 5b: check_sandbox_outcome with adversarial forged token
-    t5b_result = agent.tool.check_sandbox_outcome(contract=OFFICIAL_CONTRACT, provider_confirmation="FORGED-TOKEN-12345")
+    t5b_result = agent.tool.check_sandbox_outcome(contract=OFFICIAL_CONTRACT, provider_confirmation="FORGED-TOKEN-12345", evidence_filename=evidence_file)
     t5b_json = next(item["json"] for item in t5b_result["content"] if "json" in item)
     assert t5b_json["verified"] is False
     trace_events.append({
@@ -125,14 +125,14 @@ def generate_strands_execution_trace():
         "tool": "check_sandbox_outcome",
         "actor": "STRANDS_AGENTS_SDK",
         "status": t5b_result["status"],
-        "input": {"contract_id": OFFICIAL_CONTRACT["id"], "provider_confirmation": "FORGED-TOKEN-12345"},
+        "input": {"contract_id": OFFICIAL_CONTRACT["id"], "provider_confirmation": "FORGED-TOKEN-12345", "evidence_filename": evidence_file},
         "output": t5b_json,
-        "governance_check": "Adversarial signature rejection: forged tokens fail constant-time HMAC comparison",
+        "governance_check": "Forged demo token rejected by contract-bound sandbox fixture comparison",
     })
 
     # Step 5c: check_sandbox_outcome with valid contract-bound confirmation
     valid_confirmation = sandbox_provider_confirmation(OFFICIAL_CONTRACT["id"])
-    t5c_result = agent.tool.check_sandbox_outcome(contract=OFFICIAL_CONTRACT, provider_confirmation=valid_confirmation)
+    t5c_result = agent.tool.check_sandbox_outcome(contract=OFFICIAL_CONTRACT, provider_confirmation=valid_confirmation, evidence_filename=evidence_file)
     t5c_json = next(item["json"] for item in t5c_result["content"] if "json" in item)
     assert t5c_json["verified"] is True
     assert t5c_json["state"] == "REMEDIATED"
@@ -142,7 +142,7 @@ def generate_strands_execution_trace():
         "tool": "check_sandbox_outcome",
         "actor": "STRANDS_AGENTS_SDK",
         "status": t5c_result["status"],
-        "input": {"contract_id": OFFICIAL_CONTRACT["id"], "provider_confirmation": valid_confirmation},
+        "input": {"contract_id": OFFICIAL_CONTRACT["id"], "provider_confirmation": valid_confirmation, "evidence_filename": evidence_file},
         "output": t5c_json,
         "governance_check": "Outcome verified: both physical evidence and provider confirmation present -> REMEDIATED",
     })
@@ -159,7 +159,9 @@ def generate_strands_execution_trace():
             "executed_at_utc": start_time,
             "completed_at_utc": end_time,
             "lifecycle_steps_executed": len(trace_events),
-            "verification_verdict": "VERIFIED_GOVERNED_EXECUTION",
+            "verification_verdict": "VERIFIED_LOCAL_SDK_TOOL_INVOCATIONS",
+            "model_invoked": False,
+            "agentcore_deployed": False,
         },
         "contract": OFFICIAL_CONTRACT,
         "events": trace_events,

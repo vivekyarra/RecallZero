@@ -54,7 +54,7 @@ def deterministic_plan(run: RemedyRun) -> dict:
         {"tool": "inspect_remedy_contract", "status": "complete"},
         {"tool": "prepare_sandbox_claim", "status": "complete"},
     ]
-    if not run.evidence_filename:
+    if not run.evidence_filename or not run.evidence_filename.strip():
         steps.append({"tool": "request_physical_evidence", "status": "blocked"})
         return {"state": "NEEDS_HUMAN", "steps": steps, "sandbox": True}
     steps.append({"tool": "request_physical_evidence", "status": "complete"})

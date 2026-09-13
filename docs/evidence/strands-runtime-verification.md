@@ -1,6 +1,6 @@
 # RecallZero — Strands Agents SDK Runtime Verification
 
-This document certifies and records the genuine runtime execution of the **Strands Agents SDK (`strands-agents 1.55.1`)** within RecallZero's governed product-safety architecture.
+This document records local calls to registered tools through **`strands.Agent.tool` (`strands-agents 1.55.1`)**. It proves SDK construction and tool-boundary behavior. It does not show an LLM-driven tool loop, Bedrock invocation, or AgentCore deployment.
 
 ---
 
@@ -43,14 +43,14 @@ This document certifies and records the genuine runtime execution of the **Stran
 2. **Allowlisted Tool Boundary:**
    The `strands.Agent` is registered with exactly 5 narrow remedy tools. No shell, HTTP client, or arbitrary external tools are available in the runtime.
 
-3. **Physical Action Hard Stop:**
-   The agent stops deterministically at `request_physical_evidence`. It cannot fabricate proof or bypass the physical requirement (e.g. cutting the power cord).
+3. **Physical Evidence Gate:**
+   `request_physical_evidence` reports `NEEDS_HUMAN`; sandbox submission rejects empty evidence and outcome verification rejects completion without evidence. The trace calls tools directly, so it does not prove that an LLM stopped autonomously.
 
 4. **Sandbox Bounded Execution:**
    All submissions target `MANUFACTURER_SANDBOX`. No claim is ever transmitted to a real manufacturer during demonstrations.
 
-5. **Non-Bypassable Completion Predicates:**
-   A submission receipt is explicitly distinct from completion. `REMEDIATED` status requires both valid recorded physical evidence AND a cryptographically bound provider confirmation token.
+5. **Completion Predicates:**
+   A submission receipt is distinct from completion. The sandbox outcome tool requires a non-empty evidence filename and a matching deterministic sandbox confirmation token. That token is a public demo fixture, not a production provider signature.
 
 ---
 
@@ -68,7 +68,7 @@ The full machine-readable execution trace is recorded at:
 | **3** | `request_physical_evidence` | `STRANDS_AGENTS_SDK` | `rc-26754-asset-xr8801-demo` | `state: NEEDS_HUMAN` | Human physical gate strictly enforced. |
 | **4** | `submit_sandbox_claim` | `STRANDS_AGENTS_SDK` | `evidence: synthetic-xr8801-disabled.jpg` | `accepted: true`, `receipt: RZ-F0C60BF949` | Idempotent submission; state transitions to `AWAITING_PROVIDER`. |
 | **5a** | `check_sandbox_outcome` | `STRANDS_AGENTS_SDK` | `provider_confirmation: null` | `verified: false`, `state: AWAITING_PROVIDER` | Self-declaration of completion rejected. |
-| **5b** | `check_sandbox_outcome` | `STRANDS_AGENTS_SDK` | `provider_confirmation: "FORGED-TOKEN"` | `verified: false` | Adversarial forgery rejected via constant-time HMAC. |
+| **5b** | `check_sandbox_outcome` | `STRANDS_AGENTS_SDK` | `provider_confirmation: "FORGED-TOKEN"` | `verified: false` | Non-matching sandbox fixture rejected. |
 | **5c** | `check_sandbox_outcome` | `STRANDS_AGENTS_SDK` | `provider_confirmation: "SBX-998FE..."` | `verified: true`, `state: REMEDIATED` | Verified resolution achieved and contract closed. |
 
 ---

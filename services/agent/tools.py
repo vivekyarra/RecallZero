@@ -66,6 +66,8 @@ def submit_sandbox_claim(contract: dict, evidence_filename: str) -> ToolResult:
     run = RemedyRun.model_validate(
         {"contract": contract, "evidence_filename": evidence_filename}
     )
+    if not run.evidence_filename or not run.evidence_filename.strip():
+        raise ValueError("Physical evidence is required before sandbox submission")
     result = deterministic_plan(run)
     return _success(
         {
@@ -79,14 +81,20 @@ def submit_sandbox_claim(contract: dict, evidence_filename: str) -> ToolResult:
 
 @tool
 def check_sandbox_outcome(
-    contract: dict, provider_confirmation: str | None = None
+    contract: dict,
+    provider_confirmation: str | None = None,
+    evidence_filename: str | None = None,
 ) -> ToolResult:
     """Check the controlled provider outcome; never trust an arbitrary completion string."""
     run = RemedyRun.model_validate(
-        {"contract": contract, "provider_confirmation": provider_confirmation}
+        {
+            "contract": contract,
+            "provider_confirmation": provider_confirmation,
+            "evidence_filename": evidence_filename,
+        }
     )
-    verified = provider_confirmation_is_valid(
-        run.contract.id, run.provider_confirmation
+    verified = bool(run.evidence_filename and run.evidence_filename.strip()) and (
+        provider_confirmation_is_valid(run.contract.id, run.provider_confirmation)
     )
     return _success(
         {

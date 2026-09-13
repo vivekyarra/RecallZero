@@ -12,10 +12,12 @@
       "request_physical_evidence",
       "submit_sandbox_claim"
     ],
-    "executed_at_utc": "2026-09-12T18:12:17.896188+00:00",
-    "completed_at_utc": "2026-09-12T18:12:17.911754+00:00",
+    "executed_at_utc": "2026-09-13T06:49:23.239801+00:00",
+    "completed_at_utc": "2026-09-13T06:49:23.272308+00:00",
     "lifecycle_steps_executed": 7,
-    "verification_verdict": "VERIFIED_GOVERNED_EXECUTION"
+    "verification_verdict": "VERIFIED_LOCAL_SDK_TOOL_INVOCATIONS",
+    "model_invoked": false,
+    "agentcore_deployed": false
   },
   "contract": {
     "id": "rc-26754-asset-xr8801-demo",
@@ -86,7 +88,7 @@
         "instruction": "Consumers should unplug and stop using the recalled hair dryers immediately and contact Guang Zhou to receive a full refund. Consumers will be asked to cut the power cord and provide a photo of the destroyed product to wantefully@163.com.",
         "warning": "Keep the product unplugged. Demo evidence must be synthetic."
       },
-      "governance_check": "Agent blocked: human physical gate strictly enforced (unplugged + cut cord photo)"
+      "governance_check": "Tool returned NEEDS_HUMAN; physical evidence is required before sandbox submission"
     },
     {
       "step": 4,
@@ -113,7 +115,8 @@
       "status": "success",
       "input": {
         "contract_id": "rc-26754-asset-xr8801-demo",
-        "provider_confirmation": null
+        "provider_confirmation": null,
+        "evidence_filename": "synthetic-xr8801-disabled.jpg"
       },
       "output": {
         "state": "AWAITING_PROVIDER",
@@ -130,14 +133,15 @@
       "status": "success",
       "input": {
         "contract_id": "rc-26754-asset-xr8801-demo",
-        "provider_confirmation": "FORGED-TOKEN-12345"
+        "provider_confirmation": "FORGED-TOKEN-12345",
+        "evidence_filename": "synthetic-xr8801-disabled.jpg"
       },
       "output": {
         "state": "AWAITING_PROVIDER",
         "verified": false,
         "provider_confirmation": null
       },
-      "governance_check": "Adversarial signature rejection: forged tokens fail constant-time HMAC comparison"
+      "governance_check": "Forged demo token rejected by contract-bound sandbox fixture comparison"
     },
     {
       "step": 5,
@@ -147,7 +151,8 @@
       "status": "success",
       "input": {
         "contract_id": "rc-26754-asset-xr8801-demo",
-        "provider_confirmation": "SBX-BEEEDE58026B5C73DE72BF70"
+        "provider_confirmation": "SBX-BEEEDE58026B5C73DE72BF70",
+        "evidence_filename": "synthetic-xr8801-disabled.jpg"
       },
       "output": {
         "state": "REMEDIATED",

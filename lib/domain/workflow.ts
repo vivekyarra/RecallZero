@@ -198,7 +198,7 @@ export function workflowReducer(state: DemoState, command: WorkflowCommand): Dem
       }
       const actions: AgentAction[] = [
         { id: "inspect", tool: "inspect_remedy_contract", title: "Contract inspected", detail: "Authority, exact match, remedy, and allowed action verified.", status: "COMPLETE", boundary: "DETERMINISTIC" },
-        { id: "prepare", tool: "prepare_sandbox_claim", title: "Refund request prepared", detail: "Contact and product fields assembled for the controlled provider sandbox.", status: "COMPLETE", boundary: "STRANDS" },
+        { id: "prepare", tool: "prepare_sandbox_claim", title: "Refund request prepared", detail: "The public demo mirrors preparation for the controlled provider sandbox.", status: "COMPLETE", boundary: "STRANDS" },
         { id: "human", tool: "request_physical_evidence", title: "Physical evidence required", detail: "A human must safely disable the unplugged product and provide a photo.", status: "BLOCKED", boundary: "HUMAN" },
       ];
       return {
@@ -207,8 +207,8 @@ export function workflowReducer(state: DemoState, command: WorkflowCommand): Dem
         actions,
         timeline: [
           ...state.timeline,
-          event("REMEDIATING", "Remedy agent started", "Strands received an immutable verified contract and prepared the sandbox workflow.", "STRANDS_AGENT"),
-          event("NEEDS_HUMAN", "One physical action required", "Upload synthetic demonstration evidence after the physical safety step.", "STRANDS_AGENT"),
+          event("REMEDIATING", "Governed demo started", "The deterministic public adapter accepted the verified contract and mirrored the sandbox workflow.", "STRANDS_AGENT"),
+          event("NEEDS_HUMAN", "One physical action required", "Prepared synthetic evidence is required before sandbox submission.", "STRANDS_AGENT"),
         ],
       };
     }

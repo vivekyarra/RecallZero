@@ -44,3 +44,20 @@ test("explains the authority hierarchy", async ({ page }, testInfo) => {
   await expect(page.getByText("THE AGENT CANNOT")).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("architecture.png"), fullPage: true });
 });
+
+test("runs real safety checks and labels the SDK trace accurately", async ({ page }) => {
+  await page.getByRole("button", { name: "How it works" }).click();
+  await page.getByRole("button", { name: "Simulate Attack" }).click();
+  await expect(page.getByText(/Actual match policy result: POSSIBLE_MATCH\. PASS: injected model did not become an exact match/)).toBeVisible();
+
+  await page.getByRole("button", { name: "Test Bypass" }).click();
+  await expect(page.getByText(/PASS: missing-evidence submission was rejected/)).toBeVisible();
+
+  await page.getByRole("button", { name: "Test Forgery" }).click();
+  await expect(page.getByText(/PASS: swapped asset ID was rejected/)).toBeVisible();
+
+  await page.getByRole("button", { name: "Inspect Strands SDK Trace" }).click();
+  await expect(page.getByRole("heading", { name: "Local SDK tool trace" })).toBeVisible();
+  await expect(page.getByText(/did not invoke a model or deploy AgentCore/)).toBeVisible();
+  await expect(page.getByText(/"state":"REMEDIATED"/)).toBeVisible();
+});

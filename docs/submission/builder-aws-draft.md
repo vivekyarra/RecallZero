@@ -1,5 +1,9 @@
 # Agents for Humans: Building RecallZero, an agent that finishes product recalls instead of creating another task
 
+Published article: https://builder.aws.com/content/3AccSg72uPF7h1TswVWutUMZXq1/agents-for-humans-building-recallzero-an-agent-that-finishes-product-recalls
+
+The published version clarifies that the public web journey is a deterministic mirror, local Strands SDK tools were invoked, and Bedrock/AgentCore invocation remains unverified.
+
 Product recalls are a good example of work that is important, repetitive, and surprisingly easy to leave unfinished. A consumer may learn that something they own is unsafe, but that is only the start: they still have to determine whether the exact model is affected, read the official instructions, gather evidence, contact the provider, follow up, and confirm the remedy actually happened.
 
 For the Agents for Humans Hackathon I built **RecallZero**, a governed autonomous product-safety agent designed around one outcome: unresolved recalled products should return to zero.
@@ -62,4 +66,4 @@ Project: RecallZero
 Hackathon: Agents for Humans Hackathon
 Repository: https://github.com/vivekyarra/RecallZero
 
-Before publishing on builder.aws.com, add the verified live demo URL and final architecture image, then keep **Agents for Humans** in the article title to qualify for the hackathon bonus criteria.
+Live demo: https://recallzero.vercel.app

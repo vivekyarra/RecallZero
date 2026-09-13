@@ -55,7 +55,7 @@ export async function POST(request: Request) {
   // where Strands performs the tool loop locally or on AgentCore.
   return NextResponse.json({
     mode: "DETERMINISTIC_PUBLIC_DEMO",
-    runtime: process.env.AGENTCORE_RUNTIME_URL ? "AGENTCORE_CONFIGURED" : "LOCAL_PROTOCOL_MIRROR",
+    runtime: "LOCAL_PROTOCOL_MIRROR",
     boundary: "MANUFACTURER_SANDBOX",
     contractId: parsed.data.contract.id,
     plan: [

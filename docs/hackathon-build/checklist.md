@@ -81,5 +81,5 @@ These are not engineering blockers and must not be fabricated by the project or 
 - [ ] Upload the architecture diagram to the Devpost required architecture field.
 - [ ] Provide Devpost Submitter Type, Country of Residence, AWS Builder ID, and select **Everyday Agents**.
 - [ ] Add the public GitHub repo URL and, if available, the Vercel live-demo URL to Devpost.
-- [ ] Optional bonus: publish the prepared Builder.aws article with **Agents for Humans** in the title and add its public URL.
+- [x] Optional bonus: publish the Builder.aws article with **Agents for Humans** in the title. Public URL: https://builder.aws.com/content/3AccSg72uPF7h1TswVWutUMZXq1/agents-for-humans-building-recallzero-an-agent-that-finishes-product-recalls
 - [ ] Submit the project to the hackathon only after all required fields and deliverables above are present.

@@ -52,6 +52,10 @@ def test_real_strands_agent_constructs_with_only_governed_tools(monkeypatch):
     assert p3["state"] == "NEEDS_HUMAN"
 
     # 4. submit_sandbox_claim
+    r4_blank = agent.tool.submit_sandbox_claim(contract=CONTRACT, evidence_filename="  ")
+    assert r4_blank["status"] == "error"
+    assert "Physical evidence is required" in r4_blank["content"][0]["text"]
+
     r4 = agent.tool.submit_sandbox_claim(contract=CONTRACT, evidence_filename="test.jpg")
     assert r4["status"] == "success"
     p4 = next(item["json"] for item in r4["content"] if "json" in item)
@@ -68,7 +72,16 @@ def test_real_strands_agent_constructs_with_only_governed_tools(monkeypatch):
 
     from policy import sandbox_provider_confirmation
     valid_token = sandbox_provider_confirmation(CONTRACT["id"])
-    r5_conf = agent.tool.check_sandbox_outcome(contract=CONTRACT, provider_confirmation=valid_token)
+    r5_missing_evidence = agent.tool.check_sandbox_outcome(contract=CONTRACT, provider_confirmation=valid_token)
+    p5_missing_evidence = next(item["json"] for item in r5_missing_evidence["content"] if "json" in item)
+    assert p5_missing_evidence["verified"] is False
+    assert p5_missing_evidence["state"] == "AWAITING_PROVIDER"
+
+    r5_conf = agent.tool.check_sandbox_outcome(
+        contract=CONTRACT,
+        provider_confirmation=valid_token,
+        evidence_filename="test.jpg",
+    )
     assert r5_conf["status"] == "success"
     p5_conf = next(item["json"] for item in r5_conf["content"] if "json" in item)
     assert p5_conf["verified"] is True

@@ -10,7 +10,7 @@
 
 **Click:** `Import demo receipt`.
 
-**Say:** “A synthetic Amazon receipt becomes an Asset Passport automatically. The demo evidence is synthetic and labeled; the recall source will be real.”
+**Say:** “A synthetic Amazon receipt becomes an Asset Passport automatically. The demo evidence is labeled. The recall check attempts the live official API and clearly labels its official snapshot fallback if needed.”
 
 **Show:** Model XR-8801, retailer, date, verified synthetic receipt.
 
@@ -18,7 +18,7 @@
 
 **Click:** `Run live recall check`.
 
-**Say:** “This calls CPSC's official REST API for a recall published September 10 while this project was being built. An LLM is not allowed to declare a recall. Four deterministic predicates must pass.”
+**Say:** “This checks the official CPSC source for a recall published September 10 while this project was being built. If the live request times out, you will see the official snapshot badge. An LLM cannot declare a recall; four deterministic predicates must pass.”
 
 **Show:** Live/snapshot badge, CPSC number, product/model/retailer/purchase-window matches, official link.
 
@@ -26,9 +26,9 @@
 
 **Click:** `Let RecallZero handle it`.
 
-**Say:** “The exact match becomes an immutable Remedy Contract. Strands receives only that contract and can choose only narrow tools. It prepares the refund workflow in our controlled manufacturer sandbox.”
+**Say:** “The exact match becomes a Remedy Contract. This public journey uses a labeled deterministic mirror. Separately, the Strands SDK runtime accepts the verified contract and exposes only narrow tools; I can show its recorded local tool calls.”
 
-**Show:** Action trace boundaries: deterministic, Strands, human, sandbox.
+**Show:** Action trace boundaries: deterministic, demo mirror, human, sandbox.
 
 ## 2:05–2:40 — The physical gap
 
@@ -42,7 +42,7 @@
 
 **Click:** `Submit to manufacturer sandbox`, then `Fast-forward sandbox outcome`.
 
-**Say:** “The idempotent request returns a sandbox receipt. But submitted does not mean resolved, so RecallZero keeps monitoring until provider confirmation arrives.”
+**Say:** “The idempotent request returns a sandbox receipt. Submitted does not mean resolved. I use the demo control to advance a simulated provider approval, then verify completion.”
 
 **Click:** `Verify contract completion`.
 
@@ -56,11 +56,10 @@
 
 **Click:** `How it works`.
 
-**Say:** “Official CPSC facts feed a deterministic identity gate. Only an exact match reaches the Strands agent. The agent runs on an AgentCore-compatible runtime, but code owns truth, permissions, idempotency, and completion.”
+**Say:** “Official CPSC facts feed a deterministic identity gate. The Python agent has an AgentCore-compatible entrypoint, but no AgentCore deployment or Bedrock model invocation is claimed. Code owns truth, permissions, idempotency, and completion.”
 
 **Show:** Agent can/cannot columns.
 
 ## 4:50–5:00 — Close
 
 **Say:** “Other products tell you what was recalled. RecallZero gets it out of your life.”
-

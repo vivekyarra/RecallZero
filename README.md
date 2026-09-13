@@ -2,7 +2,7 @@
 
 > Other products tell you what was recalled. RecallZero gets it out of your life.
 
-RecallZero is a governed autonomous product-safety agent built for the **Agents for Humans Hackathon** and entered in the **Everyday Agents** track. It knows what a household owns, watches the official US Consumer Product Safety Commission recall database, deterministically verifies whether an exact unit is affected, and advances the governed remedy workflow until the outcome is independently verified.
+RecallZero is a governed product-safety agent prototype built for the **Agents for Humans Hackathon** and entered in the **Everyday Agents** track. The current public demo imports a synthetic owned product, checks the official US Consumer Product Safety Commission recall source on demand, deterministically verifies whether the exact unit is affected, and advances a sandbox remedy workflow until the outcome is independently verified.
 
 ## Why this is different
 
@@ -46,7 +46,7 @@ High-resolution exports for judges:
 - `BedrockAgentCoreApp` as the AgentCore-compatible runtime entrypoint;
 - deterministic policy code that can be exercised without AWS credentials;
 - an explicit `RECALLZERO_DETERMINISTIC_DEMO=1` mode that never pretends cloud execution occurred;
-- verifiable runtime trace evidence: [`docs/evidence/strands-runtime-verification.md`](docs/evidence/strands-runtime-verification.md) (with raw trace at [`docs/evidence/strands-agent-execution-trace.json`](docs/evidence/strands-agent-execution-trace.json)).
+- recorded local SDK tool-boundary evidence: [`docs/evidence/strands-runtime-verification.md`](docs/evidence/strands-runtime-verification.md) (with raw trace at [`docs/evidence/strands-agent-execution-trace.json`](docs/evidence/strands-agent-execution-trace.json)). This is not an LLM-driven Bedrock invocation.
 
 AgentCore deployment is a production target and is **not claimed as deployed** unless a real AWS invocation has been verified.
 
@@ -94,7 +94,7 @@ The tests cover exact/possible/no-match separation, CPSC authority restrictions,
 | Recall authority | Live CPSC REST API or explicitly labeled official snapshot |
 | Product / receipt | Synthetic demo fixture |
 | Matching | Deterministic code |
-| Agent runtime | Real Strands code; public web demo uses a labeled deterministic protocol mirror unless AgentCore is configured |
+| Agent runtime | Real Strands SDK code and local tool-call proof; the public web demo always uses a labeled deterministic protocol mirror |
 | Remedy provider | RecallZero-owned sandbox |
 | Physical evidence | Prepared synthetic demo evidence |
 | Real manufacturer contact | Never performed |
