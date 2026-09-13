@@ -157,7 +157,7 @@ export function RecallZeroApp() {
 
       {!state.asset && (
         <section className="demoLaunch panel">
-          <div className="demoBadge">JUDGE DEMO · 90 SECONDS</div>
+          <div className="demoBadge">JUDGE DEMO · REAL PRODUCT FLOW</div>
           <div className="launchCopy">
             <div className="receiptIcon"><FileArrowUp weight="duotone" /></div>
             <div>
