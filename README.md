@@ -1,75 +1,128 @@
 # RecallZero
 
-> Other products tell you what was recalled. RecallZero gets it out of your life.
+> A recall can be public and still sit dangerous in your home. RecallZero is the Strands-powered agent that finishes product recalls—not just finds them.
 
-RecallZero is a governed product-safety agent prototype built for the **Agents for Humans Hackathon** and entered in the **Everyday Agents** track. The current public demo imports a synthetic owned product, checks the official US Consumer Product Safety Commission recall source on demand, deterministically verifies whether the exact unit is affected, and advances a sandbox remedy workflow until the outcome is independently verified.
+<p align="center">
+  <a href="https://recallzero.vercel.app"><strong>Live demo</strong></a> ·
+  <a href="https://youtu.be/wPlyuN7ENpo"><strong>Demo video</strong></a> ·
+  <a href="https://devpost.com/software/recallzero-ue2p7g"><strong>Devpost</strong></a> ·
+  <a href="docs/architecture/recallzero-architecture.png"><strong>Architecture</strong></a> ·
+  <a href="docs/evidence/strands-runtime-verification.md"><strong>Strands trace</strong></a>
+</p>
 
-## Why this is different
+Built for the **Agents for Humans Hackathon** in the **Everyday Agents** track.
 
-Recall trackers stop at `RECALL FOUND`. RecallZero starts there:
+## Judge TL;DR
 
-`ownership -> official safety event -> exact identity gate -> Remedy Contract -> governed action -> human only for physical work -> outcome verification -> REMEDIATED`
+**The problem:** Recall alerts do not equal solved recalls. A consumer still has to identify whether the exact model is affected, read the official remedy, collect evidence, submit a claim, follow up, and know when it is actually done.
 
-The product deliberately has no chat-first home screen. Its primary metric is **unresolved recalled products**, and the desired state is zero.
+**The product:** RecallZero converts an owned product into an **Asset Passport**, checks authoritative CPSC recall data, issues a **Remedy Contract** only after exact deterministic matching, and carries the case through sandbox remedy submission until contract-bound evidence proves completion.
 
-## Working judge demo
+**The agentic point:** Strands handles the repeatable remedy work. Deterministic code keeps authority over safety truth, exact matching, evidence gates, and completion state. The human is surfaced only for the physical task software cannot perform.
 
-The included path uses:
+**The demo outcome:** a recalled synthetic hair dryer moves from `UNRESOLVED` to `REMEDIATED`, and the dashboard returns to the one metric that matters: **0 unresolved recalled products**.
 
-- a clearly labeled synthetic receipt for a Wantefully XR-8801 hair dryer;
-- the live official CPSC REST API, with a visibly labeled official snapshot fallback;
-- a deterministic four-predicate identity match;
-- a genuine Strands Agents SDK runtime implementation;
-- a controlled manufacturer sandbox - no claim is sent to a real manufacturer;
-- one prepared synthetic physical-action evidence handoff;
-- provider confirmation plus evidence as non-bypassable completion predicates.
+## Why this should stand out
 
-The live CPSC query window is generated from the current UTC date so the judge path does not age out after the build date.
+Most recall tools stop at *notification*. RecallZero starts there.
 
-## Safety architecture
+```text
+ownership → official recall source → exact identity gate → Remedy Contract
+→ Strands remedy tools → human physical proof → sandbox provider outcome
+→ verified closure → zero unresolved recalls
+```
 
-The model may interpret an already verified remedy, sequence allowlisted tools, and explain progress. It may not invent or confirm a recall, override official instructions, contact a real manufacturer in the public demo, bypass missing evidence, or mark its own work complete.
+That loop makes the project fit the hackathon brief directly: it removes repetitive household busywork, handles the process end to end, and only pings a human when there is a real-world action to take.
+
+## Working demo path
+
+The public judge flow is intentionally narrow and complete:
+
+1. Import a clearly labeled synthetic receipt for a **Wantefully XR-8801 hair dryer**.
+2. Run an on-demand CPSC recall check.
+3. Show the source badge: live CPSC API when reachable, otherwise an explicitly labeled official snapshot fallback.
+4. Apply four deterministic identity predicates.
+5. Create a Remedy Contract only for an exact match.
+6. Stop for the physical evidence handoff.
+7. Use prepared synthetic evidence for the public demo.
+8. Submit to a controlled manufacturer sandbox with an idempotency key.
+9. Fast-forward the simulated provider outcome.
+10. Verify completion only when evidence and provider confirmation both bind to the same contract.
+
+No claim is sent to a real manufacturer. No real product is damaged.
+
+## What is real vs. sandboxed
+
+| Surface | Truth boundary |
+|---|---|
+| Web product | Live Next.js app deployed at `recallzero.vercel.app` |
+| Recall source | Official CPSC API path, with an explicitly labeled official snapshot fallback |
+| Product ownership | Synthetic receipt / synthetic Asset Passport |
+| Exact matching | Deterministic TypeScript domain code |
+| Remedy execution | Public browser journey mirrors the governed protocol |
+| Strands runtime | Real Python `strands.Agent` with five allowlisted tools and local SDK tool-call trace |
+| Provider | RecallZero-owned manufacturer sandbox |
+| Physical proof | Prepared synthetic evidence for the demo |
+| Real manufacturer contact | Never performed |
+| Bedrock / AgentCore | Configured target and entrypoint; not claimed as deployed or LLM-driven until verified |
+
+## Architecture: authority before autonomy
+
+RecallZero is built around a simple rule:
+
+> The agent can do routine work, but it cannot become the source of safety truth.
 
 ![RecallZero architecture](docs/architecture/recallzero-architecture.svg)
 
-Architecture source: [`recallzero-architecture.mmd`](docs/architecture/recallzero-architecture.mmd).
-High-resolution exports for judges:
-- [Architecture PNG (1800x1050)](docs/architecture/recallzero-architecture.png)
+High-resolution judge exports:
+
+- [Architecture PNG](docs/architecture/recallzero-architecture.png)
 - [Architecture PDF](docs/architecture/recallzero-architecture.pdf)
+- [Architecture Mermaid source](docs/architecture/recallzero-architecture.mmd)
 
-## Strands and AWS
+### Core layers
 
-`services/agent/` contains the Python Strands runtime. It uses:
+- **Official source layer:** CPSC recall retrieval through `lib/server/cpsc.ts`.
+- **Identity layer:** deterministic model, retailer, purchase-window, and recall-scope checks.
+- **Contract layer:** immutable Remedy Contract created only after exact match.
+- **Agent layer:** Strands runtime receives the verified contract and operates through narrow tools.
+- **Human gate:** physical actions stay with the user and are represented by evidence, not model claims.
+- **Provider layer:** sandbox-only submission and outcome verification.
+- **Verification layer:** unit, policy, stress, and browser tests.
 
-- `strands.Agent` with narrow remedy tools;
-- `strands.models.BedrockModel` for the Amazon Bedrock target;
-- `BedrockAgentCoreApp` as the AgentCore-compatible runtime entrypoint;
-- deterministic policy code that can be exercised without AWS credentials;
-- an explicit `RECALLZERO_DETERMINISTIC_DEMO=1` mode that never pretends cloud execution occurred;
-- recorded local SDK tool-boundary evidence: [`docs/evidence/strands-runtime-verification.md`](docs/evidence/strands-runtime-verification.md) (with raw trace at [`docs/evidence/strands-agent-execution-trace.json`](docs/evidence/strands-agent-execution-trace.json)). This is not an LLM-driven Bedrock invocation.
+## Strands Agents SDK implementation
 
-AgentCore deployment is a production target and is **not claimed as deployed** unless a real AWS invocation has been verified.
+`services/agent/` contains the real governed agent boundary:
 
-## Run locally
+- `strands.Agent`
+- `strands.models.BedrockModel`
+- `BedrockAgentCoreApp`
+- Pydantic contract validation
+- exactly five allowlisted tools:
+  1. `inspect_remedy_contract`
+  2. `prepare_sandbox_claim`
+  3. `request_physical_evidence`
+  4. `submit_sandbox_claim`
+  5. `check_sandbox_outcome`
 
-Prerequisites: Node.js 22+, Python 3.11+, and `uv`.
+The committed evidence file records local calls through `strands.Agent.tool` using `strands-agents 1.55.1`:
 
-```powershell
-npm ci
-uv sync --project services/agent
-npm run dev
-```
+- [Runtime verification](docs/evidence/strands-runtime-verification.md)
+- [Raw execution trace](docs/evidence/strands-agent-execution-trace.json)
 
-Open `http://localhost:3000`. No login or cloud credential is required for the controlled public demo.
+This proves SDK construction and tool-boundary behavior. It does **not** claim a live Bedrock model invocation or deployed AgentCore runtime.
 
-Run the governed AgentCore-compatible service locally in deterministic demo mode:
+## Safety invariants
 
-```powershell
-$env:RECALLZERO_DETERMINISTIC_DEMO = "1"
-uv run --project services/agent python services/agent/main.py
-```
-
-For Bedrock/AgentCore execution, follow [`services/agent/README.md`](services/agent/README.md). Do not treat the deterministic adapter as proof of a deployed AgentCore runtime.
+| Invariant | How RecallZero enforces it |
+|---|---|
+| No AI-created recalls | Recall truth comes from official CPSC data or labeled snapshot fallback |
+| No fuzzy exact matches | Similar products stay `POSSIBLE_MATCH`; only deterministic predicates can produce `EXACT_MATCH` |
+| No fake completion | Provider token alone is rejected; evidence alone is rejected |
+| No silent manufacturer action | Public demo submits only to `MANUFACTURER_SANDBOX` |
+| No arbitrary tools | Strands runtime exposes only five contract-scoped tools |
+| No unsafe hydration | Persisted browser state is revalidated before restoration |
+| No hidden demo claims | Synthetic data, sandbox provider, and AgentCore limits are labeled openly |
 
 ## Verification
 
@@ -83,37 +136,90 @@ npm run test:e2e
 npm run check:secrets
 ```
 
-GitHub Actions runs three independent verification jobs: frontend quality/build, Python agent safety tests, and repeated Playwright desktop/mobile journeys. Browser runs save visual evidence into the workflow artifact on every CI execution.
+GitHub Actions is configured with three independent jobs:
 
-The tests cover exact/possible/no-match separation, CPSC authority restrictions, the dynamic official-query window, legal state transitions, physical-evidence and provider completion gates, idempotency, deterministic stress cases, the complete browser journey, responsive rendering, and browser console errors.
+- `lint-type-test-build`: frontend quality, type safety, unit tests, secret scan, audit, production build.
+- `python-agent-safety`: governed policy tests for the Strands runtime.
+- `browser-e2e-stress`: repeated Playwright desktop/mobile journeys with browser artifacts.
 
-## Demo truth boundaries
+The test suite covers exact / possible / no-match separation, official-source restrictions, dynamic CPSC query windows, legal state transitions, missing-evidence rejection, forged provider confirmation rejection, idempotency, deterministic stress cases, responsive rendering, and browser console errors.
 
-| Surface | Demo truth |
-|---|---|
-| Recall authority | Live CPSC REST API or explicitly labeled official snapshot |
-| Product / receipt | Synthetic demo fixture |
-| Matching | Deterministic code |
-| Agent runtime | Real Strands SDK code and local tool-call proof; the public web demo always uses a labeled deterministic protocol mirror |
-| Remedy provider | RecallZero-owned sandbox |
-| Physical evidence | Prepared synthetic demo evidence |
-| Real manufacturer contact | Never performed |
+## Run locally
+
+Prerequisites:
+
+- Node.js 22+
+- Python 3.11+
+- `uv`
+
+```powershell
+npm ci
+uv sync --project services/agent
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+Run the governed Strands-compatible service locally in deterministic demo mode:
+
+```powershell
+$env:RECALLZERO_DETERMINISTIC_DEMO = "1"
+uv run --project services/agent python services/agent/main.py
+```
+
+Replay the SDK tool-boundary trace:
+
+```powershell
+cd services/agent
+uv run python run_strands_trace.py
+```
+
+For genuine Bedrock / AgentCore execution, follow [`services/agent/README.md`](services/agent/README.md). Do not treat deterministic mode as proof of deployed AgentCore execution.
 
 ## Repository map
 
-- `app/`, `components/`: Next.js product surface and server routes.
-- `lib/domain/`: safety kernel, matching, contracts, workflow invariants.
-- `lib/server/`: official CPSC client.
-- `services/agent/`: Strands tools, Bedrock model adapter, and AgentCore entrypoint.
-- `tests/`, `e2e/`, `services/agent/tests/`: unit, policy, stress, and browser evidence.
-- `docs/architecture/`: architecture source and presentation-ready vector export.
-- `docs/demo/`: exact five-minute recording script.
-- `docs/submission/`: Devpost copy and Builder.aws article draft.
-- `docs/hackathon-build/`: scope, PRD, spec, checklist, and build journal.
+| Path | Purpose |
+|---|---|
+| `app/`, `components/` | Next.js product surface and judge journey |
+| `lib/domain/` | safety kernel, matching, contracts, workflow invariants |
+| `lib/server/` | official CPSC client |
+| `services/agent/` | Strands tools, Bedrock model adapter, AgentCore entrypoint |
+| `tests/`, `e2e/`, `services/agent/tests/` | unit, policy, stress, and browser evidence |
+| `docs/architecture/` | source and exports for the architecture diagram |
+| `docs/evidence/` | Strands SDK verification and raw execution trace |
+| `docs/demo/` | demo recording scripts |
+| `docs/submission/` | Devpost and Builder.aws support material |
+| `docs/hackathon-build/` | scope, PRD, spec, checklist, and build journal |
 
-## Hackathon submission status
+## Built with
 
-A real Devpost draft has been created for RecallZero. Final submission still requires user-owned identity/media inputs that cannot be invented: the AWS Builder ID, the public YouTube/Vimeo demo URL, submitter/country answers, and the architecture file upload.
+- Strands Agents SDK
+- Amazon Bedrock target adapter
+- Amazon Bedrock AgentCore-compatible runtime entrypoint
+- Next.js 16
+- React 19
+- TypeScript
+- Python
+- Pydantic
+- Zod
+- Vitest
+- Pytest
+- Playwright
+- GitHub Actions
+- Vercel
+
+## Roadmap
+
+- Real opt-in ownership sources: email receipts, retailer exports, purchase history, warranty cards.
+- Broader CPSC category matching with deterministic product identity rules per category.
+- Verified provider integrations with signed status callbacks.
+- Background monitoring that notifies only when an owned item is affected.
+- Authenticated production runtime with verified Bedrock / AgentCore invocation evidence.
+- Multi-product household dashboard with unresolved-risk prioritization.
 
 ## License
 
