@@ -533,7 +533,7 @@ function TraceModal({ onClose }: { onClose: () => void }) {
                 <span style={{ font: "500 8px 'DM Mono'", background: "var(--mint)", color: "var(--green)", padding: "2px 6px", borderRadius: "4px" }}>{s.status}</span>
               </div>
               <div style={{ background: "#1a1d1a", color: "#a3e635", font: "500 10px 'DM Mono'", padding: "8px 10px", borderRadius: "6px", overflowX: "auto" }}>
-                <code>Output: {JSON.stringify(s.output)}</code>
+                <code style={{ background: "transparent", color: "inherit", padding: 0, whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>Output: {JSON.stringify(s.output)}</code>
               </div>
             </div>
           ))}
