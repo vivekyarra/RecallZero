@@ -7,7 +7,8 @@
   <a href="https://youtu.be/wPlyuN7ENpo"><strong>Demo video</strong></a> ·
   <a href="https://devpost.com/software/recallzero-ue2p7g"><strong>Devpost</strong></a> ·
   <a href="docs/architecture/recallzero-architecture.png"><strong>Architecture</strong></a> ·
-  <a href="docs/evidence/strands-runtime-verification.md"><strong>Strands trace</strong></a>
+  <a href="docs/evidence/strands-runtime-verification.md"><strong>Strands trace</strong></a> ·
+  <a href="docs/evidence/agentcore-runtime-verification.md"><strong>Verified AgentCore run</strong></a>
 </p>
 
 Built for the **Agents for Humans Hackathon** in the **Everyday Agents** track.
@@ -18,7 +19,7 @@ Built for the **Agents for Humans Hackathon** in the **Everyday Agents** track.
 
 **The product:** RecallZero converts an owned product into an **Asset Passport**, checks authoritative CPSC recall data, issues a **Remedy Contract** only after exact deterministic matching, and carries the case through sandbox remedy submission until contract-bound evidence proves completion.
 
-**The agentic point:** Strands handles the repeatable remedy work. Deterministic code keeps authority over safety truth, exact matching, evidence gates, and completion state. The human is surfaced only for the physical task software cannot perform.
+**The agentic point:** Strands has a real Bedrock/AgentCore tool-call proof, while deterministic code keeps authority over safety truth, exact matching, evidence gates, and completion state. The public browser demo mirrors the governed protocol; it is not connected to the temporary cloud runtime. The human is surfaced only for the physical task software cannot perform.
 
 **The demo outcome:** a recalled synthetic hair dryer moves from `UNRESOLVED` to `REMEDIATED`, and the dashboard returns to the one metric that matters: **0 unresolved recalled products**.
 
@@ -28,7 +29,7 @@ Most recall tools stop at *notification*. RecallZero starts there.
 
 ```text
 ownership → official recall source → exact identity gate → Remedy Contract
-→ Strands remedy tools → human physical proof → sandbox provider outcome
+→ governed remedy protocol → human physical proof → sandbox provider outcome
 → verified closure → zero unresolved recalls
 ```
 

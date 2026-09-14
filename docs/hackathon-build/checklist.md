@@ -30,7 +30,7 @@
   Spec ref: `spec.md > Strands remedy runtime`
   Delivered: Genuine Strands `Agent`, `BedrockModel`, native governed tools, structured `ToolResult` JSON, runtime entrypoint, common action schema, and safety tests.
   Verified: CI constructs the real Strands Agent without cloud credentials, checks the exact allowlist, and executes a registered governed tool through the SDK boundary.
-  Note: AgentCore deployment is intentionally not claimed without verified AWS deployment evidence.
+  Later proof: the actual agent was temporarily deployed to AgentCore and invoked through Bedrock; see `docs/evidence/agentcore-runtime-verification.md`. The runtime was deleted after verification.
 
 - [x] **5. Build the manufacturer remedy sandbox**
   Spec ref: `spec.md > Manufacturer remedy sandbox`
@@ -61,7 +61,7 @@
   Spec ref: `spec.md > Stack`
   Delivered: Production Vercel deployment live at `https://recallzero.vercel.app`.
   Verified: Full anonymous end-to-end judge flow tested and verified against the live production deployment.
-  Note: AgentCore deployment is intentionally not claimed without verified AWS deployment evidence.
+  Separate cloud proof: the temporary AgentCore run is documented in `docs/evidence/agentcore-runtime-verification.md`; it is not the public browser backend.
 
 - [x] **11. Prepare Devpost handoff**
   Spec ref: `prd.md > Submission Proof Points`
@@ -76,7 +76,7 @@ These are not engineering blockers and must not be fabricated by the project or 
 - [x] Add GitHub About description/topics and enable suitable `main` branch protection/status checks.
 - [x] Ensure the MIT license is visible in GitHub repository metadata/About.
 - [x] Authorize GitHub import in Vercel, deploy RecallZero, and verify the public URL anonymously.
-- [ ] Optional but score-positive: deploy the Strands runtime to Amazon Bedrock AgentCore and retain ARN/log/invocation evidence.
+- [x] Optional but score-positive: temporarily deploy the Strands runtime to Amazon Bedrock AgentCore and retain ARN/log/invocation evidence; remove the runtime after verification.
 - [ ] Record and publish the prepared demo as a public YouTube/Vimeo video, maximum 5 minutes.
 - [ ] Upload the architecture diagram to the Devpost required architecture field.
 - [ ] Provide Devpost Submitter Type, Country of Residence, AWS Builder ID, and select **Everyday Agents**.

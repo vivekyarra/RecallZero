@@ -112,7 +112,7 @@ RecallZero does not add another app for the user to babysit. The product is buil
   - `submit_sandbox_claim`
   - `check_sandbox_outcome`
 
-The repository includes a committed local Strands SDK tool-call trace. The public browser demo is a deterministic mirror of that governed protocol. AWS Bedrock model invocation and AgentCore deployment are configured targets, but they are **not** claimed as verified deployed runtime execution.
+The repository includes a committed local Strands SDK tool-call trace. The public browser demo is a deterministic mirror of that governed protocol. Separately, the actual RecallZero Strands agent was deployed temporarily to Amazon Bedrock AgentCore and invoked with a synthetic sandbox Remedy Contract through Amazon Bedrock Nova 2 Lite. AgentCore returned HTTP 200 and CloudWatch recorded the `prepare_sandbox_claim` tool call. The [runtime ARN, timestamp, exact request and response, sanitized logs, and commands](https://github.com/vivekyarra/RecallZero/blob/main/docs/evidence/agentcore-runtime-verification.md) are public. The temporary runtime was deleted after verification, so the browser demo is **not** a live AgentCore frontend and no real manufacturer was contacted.
 
 ### Verification
 
@@ -143,7 +143,7 @@ The agent is useful because it can move routine work forward. It is safe because
 | AI pretends the physical step happened | Empty evidence blocks submission |
 | AI closes its own case | Evidence alone is rejected; provider token alone is rejected |
 | Demo contacts a real company | Public flow submits only to RecallZero’s sandbox |
-| Demo overclaims cloud execution | Bedrock / AgentCore are configured targets, not claimed as verified deployment |
+| Demo overclaims cloud execution | The temporary real Bedrock/AgentCore invocation has an auditable record; the public browser journey remains a deterministic mirror and the cloud runtime was deleted |
 
 ---
 
@@ -189,14 +189,14 @@ That pattern can scale beyond recalls to warranties, returns, repairs, insurance
 - Extend deterministic matching across more CPSC product categories.
 - Add signed provider callbacks instead of simulated sandbox outcomes.
 - Run background monitoring so users are notified only when an owned item is affected.
-- Verify and record a production Bedrock / AgentCore deployment.
+- Build a durable, scoped-identity production Bedrock / AgentCore deployment on the verified temporary invocation.
 - Build a household dashboard that prioritizes unresolved safety risk by urgency.
 
 ---
 
 ## Built for the scorecard
 
-- **Technological Implementation:** real Strands SDK runtime, Bedrock target adapter, AgentCore-compatible entrypoint, deterministic kernel, tested tool boundaries.
+- **Technological Implementation:** real Strands SDK runtime, verified temporary Bedrock/AgentCore invocation and tool call, deterministic kernel, tested tool boundaries.
 - **Design:** coherent product surface focused on one outcome: zero unresolved recalls.
 - **Potential Impact:** removes a real household burden where missing a step can leave a dangerous product in use.
 - **Creativity & Originality:** moves beyond notification into governed remedy completion.
@@ -206,7 +206,7 @@ That pattern can scale beyond recalls to warranties, returns, repairs, insurance
 
 - Strands Agents SDK
 - Amazon Bedrock
-- Bedrock AgentCore-compatible runtime entrypoint
+- Bedrock AgentCore runtime (temporarily deployed and verified)
 - Next.js
 - React
 - TypeScript
