@@ -1,3 +1,7 @@
+import pytest
+from pydantic import ValidationError
+
+import main
 from main import build_agent
 
 
@@ -86,3 +90,31 @@ def test_real_strands_agent_constructs_with_only_governed_tools(monkeypatch):
     p5_conf = next(item["json"] for item in r5_conf["content"] if "json" in item)
     assert p5_conf["verified"] is True
     assert p5_conf["state"] == "REMEDIATED"
+
+
+@pytest.mark.parametrize(
+    "contract_change",
+    [
+        {"authority": "UNVERIFIED"},
+        {"matchStatus": "POSSIBLE_MATCH"},
+        {"agentAuthority": "REAL_MANUFACTURER"},
+    ],
+)
+def test_entrypoint_rejects_unsafe_contract_before_model_creation(
+    monkeypatch, contract_change
+):
+    def unexpected_model_creation():
+        pytest.fail("Bedrock model must not be created for an unsafe contract")
+
+    monkeypatch.delenv("RECALLZERO_DETERMINISTIC_DEMO", raising=False)
+    monkeypatch.setattr(main, "build_agent", unexpected_model_creation)
+    with pytest.raises(ValidationError):
+        main.invoke({"contract": {**CONTRACT, **contract_change}})
+
+
+def test_entrypoint_deterministic_mode_discloses_no_cloud_execution(monkeypatch):
+    monkeypatch.setenv("RECALLZERO_DETERMINISTIC_DEMO", "1")
+    result = main.invoke({"contract": CONTRACT})
+    assert result["mode"] == "DETERMINISTIC_DEMO"
+    assert result["result"]["state"] == "NEEDS_HUMAN"
+    assert result["disclosure"] == "No model or real manufacturer was contacted."

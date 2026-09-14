@@ -30,10 +30,11 @@ app = BedrockAgentCoreApp()
 def build_agent() -> Agent:
     model = BedrockModel(
         model_id=os.getenv(
-            "BEDROCK_MODEL_ID", "global.anthropic.claude-sonnet-4-6"
+            "BEDROCK_MODEL_ID", "global.amazon.nova-2-lite-v1:0"
         ),
         region_name=os.getenv("AWS_REGION", "us-west-2"),
         temperature=0,
+        max_tokens=512,
     )
     return Agent(
         model=model,
@@ -61,7 +62,9 @@ def invoke(payload: dict) -> dict:
     agent = build_agent()
     prompt = (
         "Execute the next safe remedy step for this verified contract. "
-        "Use tools; do not restate the contract. Input: "
+        "Use tools; do not restate the contract or physical-action instructions. "
+        "Return only a compact JSON summary with the state, tool used, and whether "
+        "any external contact occurred. Input: "
         + run.model_dump_json()
     )
     result = agent(prompt)
@@ -74,4 +77,3 @@ def invoke(payload: dict) -> dict:
 
 if __name__ == "__main__":
     app.run()
-

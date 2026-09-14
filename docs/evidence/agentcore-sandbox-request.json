@@ -1,0 +1,16 @@
+{
+  "contract": {
+    "id": "rc-26754-asset-xr8801-demo",
+    "authority": "US CPSC",
+    "recallNumber": "26754",
+    "recallUrl": "https://www.cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
+    "hazard": "The recalled hair dryer brushes can present a risk of death or serious injury from electrocution or shock and can overheat, posing a burn hazard.",
+    "officialAction": "Consumers should unplug and stop using the recalled hair dryers immediately and contact Guang Zhou to receive a full refund. Consumers will be asked to cut the power cord and provide a photo of the destroyed product to wantefully@163.com.",
+    "remedy": "FULL_REFUND",
+    "provider": "Guang Zhou",
+    "requiredEvidence": ["Photo of disabled product with cut power cord"],
+    "completionCondition": "Both consumer physical evidence and provider approval must be verified.",
+    "agentAuthority": "SANDBOX_ROUTINE_REMEDY_ONLY",
+    "matchStatus": "EXACT_MATCH"
+  }
+}

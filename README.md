@@ -64,7 +64,7 @@ No claim is sent to a real manufacturer. No real product is damaged.
 | Provider | RecallZero-owned manufacturer sandbox |
 | Physical proof | Prepared synthetic evidence for the demo |
 | Real manufacturer contact | Never performed |
-| Bedrock / AgentCore | Configured target and entrypoint; not claimed as deployed or LLM-driven until verified |
+| Bedrock / AgentCore | Historical real Strands/Bedrock invocation on temporary AgentCore runtime; runtime deleted after proof |
 
 ## Architecture: authority before autonomy
 
@@ -110,7 +110,7 @@ The committed evidence file records local calls through `strands.Agent.tool` usi
 - [Runtime verification](docs/evidence/strands-runtime-verification.md)
 - [Raw execution trace](docs/evidence/strands-agent-execution-trace.json)
 
-This proves SDK construction and tool-boundary behavior. It does **not** claim a live Bedrock model invocation or deployed AgentCore runtime.
+That local trace proves SDK construction and tool-boundary behavior, not cloud execution. Separately, the actual agent was temporarily deployed to AgentCore and invoked through Bedrock with a synthetic sandbox contract. The HTTP 200 response and CloudWatch tool event are documented in [verified AgentCore runtime evidence](docs/evidence/agentcore-runtime-verification.md). The runtime was then deleted; the public browser demo remains unchanged and does not call AgentCore. [Access and status summary](docs/evidence/aws-agentcore-readiness.md).
 
 ## Safety invariants
 
@@ -218,7 +218,7 @@ For genuine Bedrock / AgentCore execution, follow [`services/agent/README.md`](s
 - Broader CPSC category matching with deterministic product identity rules per category.
 - Verified provider integrations with signed status callbacks.
 - Background monitoring that notifies only when an owned item is affected.
-- Authenticated production runtime with verified Bedrock / AgentCore invocation evidence.
+- Scoped-identity, durable production AgentCore deployment building on the verified temporary invocation.
 - Multi-product household dashboard with unresolved-risk prioritization.
 
 ## License

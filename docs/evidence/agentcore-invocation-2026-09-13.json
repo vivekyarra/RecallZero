@@ -1,0 +1,37 @@
+{
+  "started_at_utc": "2026-09-13T18:58:30.943638+00:00",
+  "completed_at_utc": "2026-09-13T18:58:37.926419+00:00",
+  "account_id": "768669378827",
+  "region": "ap-south-1",
+  "runtime_arn": "arn:aws:bedrock-agentcore:ap-south-1:768669378827:runtime/RecallZeroProof_RecallZeroRemedy-scLXKuG841",
+  "runtime_session_id": "bddbef08-ad6b-437b-a836-7164d9124dc5",
+  "http_status": 200,
+  "content_type": "application/json",
+  "request": {
+    "contract": {
+      "id": "rc-26754-asset-xr8801-demo",
+      "authority": "US CPSC",
+      "recallNumber": "26754",
+      "recallUrl": "https://www.cpsc.gov/Recalls/2026/Guang-Zhou-Recalls-Wantefully-Hair-Dryer-Brushes-Due-to-Risk-of-Serious-Injury-or-Death-from-Electrocution-Shock-and-Burn-Hazards-Violate-Federal-Regulations",
+      "hazard": "The recalled hair dryer brushes can present a risk of death or serious injury from electrocution or shock and can overheat, posing a burn hazard.",
+      "officialAction": "Consumers should unplug and stop using the recalled hair dryers immediately and contact Guang Zhou to receive a full refund. Consumers will be asked to cut the power cord and provide a photo of the destroyed product to wantefully@163.com.",
+      "remedy": "FULL_REFUND",
+      "provider": "Guang Zhou",
+      "requiredEvidence": [
+        "Photo of disabled product with cut power cord"
+      ],
+      "completionCondition": "Both consumer physical evidence and provider approval must be verified.",
+      "agentAuthority": "SANDBOX_ROUTINE_REMEDY_ONLY",
+      "matchStatus": "EXACT_MATCH"
+    }
+  },
+  "response": {
+    "mode": "STRANDS_BEDROCK",
+    "result": "The next safe - The generated text has been blocked by our content filters.\n",
+    "contract_id": "rc-26754-asset-xr8801-demo"
+  },
+  "limitations": [
+    "Synthetic owned product and controlled manufacturer sandbox only.",
+    "This call does not prove a real manufacturer refund or physical remediation."
+  ]
+}

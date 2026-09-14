@@ -12,14 +12,6 @@ uv run --project services/agent python services/agent/main.py
 
 For genuine Bedrock execution, omit `RECALLZERO_DETERMINISTIC_DEMO`, configure AWS credentials or an AgentCore execution role, and set `BEDROCK_MODEL_ID` if needed.
 
-Deploy using the official direct-code flow:
+The official CLI is `npm install -g @aws/agentcore`. Its `create` command scaffolds a new project; it does **not** deploy this existing `services/agent` code by itself. [`scripts/prepare-agentcore-project.ps1`](../../scripts/prepare-agentcore-project.ps1) wires the scaffold to this entrypoint; the [verified run record](../../docs/evidence/agentcore-runtime-verification.md) documents the temporary deployment and cleanup. Configure a scoped account identity and review usage charges before redeploying. See the official [Python direct-code deployment guide](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-get-started-code-deploy-python.html).
 
-```powershell
-npm install -g @aws/agentcore
-agentcore create --project-name RecallZero --name RecallZeroRemedyAgent --language Python --framework Strands --model-provider Bedrock --memory none --build CodeZip
-agentcore deploy
-agentcore invoke '<verified contract payload>'
-```
-
-Never describe the runtime as deployed until an ARN and successful invocation have been recorded.
-
+Never use a generated scaffold's invocation as RecallZero evidence. The recorded runtime was deleted after verification; do not describe it as currently deployed.

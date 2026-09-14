@@ -1,0 +1,42 @@
+{
+  "source": "AWS CloudWatch GetLogEvents",
+  "region": "ap-south-1",
+  "log_group": "/aws/bedrock-agentcore/runtimes/RecallZeroProof_RecallZeroRemedy-scLXKuG841-DEFAULT",
+  "captured_at_utc": "2026-09-13T19:02:00Z",
+  "sanitization": "Full Python stack trace and duplicate OpenTelemetry warning omitted; session IDs, request IDs, tool names, and relevant error retained.",
+  "events": [
+    {
+      "at_utc": "2026-09-13T18:55:54.492Z",
+      "level": "ERROR",
+      "request_id": "307f4c7b-f1f5-4b5e-93f9-717ab40f7cab",
+      "session_id": "f80eac31-9233-4809-9b8d-0d11894c6695",
+      "message": "Claude ConverseStream rejected: INVALID_PAYMENT_INSTRUMENT; no model output. No payment method was changed."
+    },
+    {
+      "at_utc": "2026-09-13T18:58:38.026Z",
+      "level": "INFO",
+      "session_id": "bddbef08-ad6b-437b-a836-7164d9124dc5",
+      "message": "Tool #1: request_physical_evidence"
+    },
+    {
+      "at_utc": "2026-09-13T18:58:39.156Z",
+      "level": "INFO",
+      "request_id": "2682b146-9a25-4f08-b3f5-a2611c38becc",
+      "session_id": "bddbef08-ad6b-437b-a836-7164d9124dc5",
+      "message": "Invocation completed successfully (2.743s); final generated text was content-filtered."
+    },
+    {
+      "at_utc": "2026-09-13T19:00:48.291Z",
+      "level": "INFO",
+      "session_id": "87b228a2-5741-4be4-a0bb-a54653b64dfd",
+      "message": "Tool #1: prepare_sandbox_claim"
+    },
+    {
+      "at_utc": "2026-09-13T19:00:49.253Z",
+      "level": "INFO",
+      "request_id": "741b7f53-8a24-4a9d-96e8-6f4df00dc75a",
+      "session_id": "87b228a2-5741-4be4-a0bb-a54653b64dfd",
+      "message": "Invocation completed successfully (2.419s)."
+    }
+  ]
+}
