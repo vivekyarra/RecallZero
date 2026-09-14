@@ -1,99 +1,92 @@
 # RecallZero
 
-> Recall alerts are not outcomes. RecallZero is a governed Strands agent that exact-matches what you own, carries the remedy forward, pauses for proof, and closes only when verified.
-
-### From a public recall to a verified remedy — with the human interrupted only when software physically cannot continue.
-
-**Live demo:** https://recallzero.vercel.app  
-**Source:** https://github.com/vivekyarra/RecallZero  
-**Demo video:** https://youtu.be/wPlyuN7ENpo  
-**Build story:** https://builder.aws.com/content/3AccSg72uPF7h1TswVWutUMZXq1/agents-for-humans-building-recallzero-an-agent-that-finishes-product-recalls
-
-> **A recall being published does not make a household safe. The work after the alert is the problem.**
-
----
+> A Strands agent that turns product recall alerts into finished remedies—checking your exact item, handling the claim, pausing for proof, and verifying the outcome.
 
 ## Inspiration
 
-Most recall experiences optimize for **discovery**: a notice exists, a search result appears, an alert is sent.
+RecallZero started with a simple frustration: finding a recall is not the same as fixing it.
 
-But a person still has to answer the harder questions:
+A recall notice can be public for months and the product can still be sitting in someone’s home. The alert is only the first step. After that, the owner still has to figure out whether their exact model is affected, check when and where they bought it, read the official remedy, gather whatever proof is required, submit the claim, and then remember to follow up.
 
-- Is **my exact product** affected, or just something similar?
-- What does the official remedy actually require?
-- What proof do I need?
-- Has the claim merely been submitted, or is the remedy really complete?
-- Who remembers to follow up if the provider has not finished the process?
+That is a lot of small work for something people understandably want to deal with once and be done with.
 
-That gap between **“recall found”** and **“risk actually resolved”** is where RecallZero starts.
+I wanted to build an agent that handles that follow-through, but without giving the model permission to guess on the safety-critical parts.
 
-RecallZero is an **Everyday Agent** for product-safety busywork. It is designed to run the routine workflow quietly and surface the human only when a real physical action is unavoidable.
-
-The product goal is intentionally simple:
-
-```latex
-\[
-\boxed{\text{Goal: } \min U_{\text{recalled products}} = 0}
-\]
-```
-
----
+That became RecallZero.
 
 ## What it does
 
-RecallZero takes a product from **owned → checked → exact-matched → remediated → independently verified**.
+RecallZero takes a product recall from “is mine affected?” to “is the remedy actually complete?”
 
-The judge flow is:
+For the demo, I use a clearly labeled synthetic receipt for a Wantefully XR-8801 hair dryer.
 
-```text
-synthetic receipt
-→ Asset Passport
-→ official CPSC recall source
-→ deterministic identity gate
-→ immutable Remedy Contract
-→ governed Strands tools
-→ human physical-evidence gate
-→ controlled manufacturer sandbox
-→ provider outcome
-→ verified closure
-→ 0 unresolved recalled products
-```
+The flow is straightforward:
 
-The demo deliberately uses one narrow case: a clearly labeled synthetic receipt for a **Wantefully XR-8801 hair dryer**.
+1. RecallZero turns the receipt into an Asset Passport.
+2. It checks the official US CPSC recall source.
+3. Code verifies the product family, exact model, retailer, and purchase window.
+4. Only an exact match creates a Remedy Contract.
+5. The Strands agent handles the routine digital steps from that contract.
+6. If the official remedy requires something physical, the agent stops and asks the human for proof.
+7. The case stays open until the provider outcome is tied back to that same contract.
 
-That narrow scope is a feature, not a limitation. Product safety is not a place to use vague semantic similarity and hope the model guessed correctly. RecallZero proves the complete loop on one product before scaling the same governed pattern to more categories.
+The result is deliberately simple: the dashboard starts with an unresolved recalled product and ends at zero only after the remedy has really been verified.
 
-### The completion invariant
+A similar product is not enough. A confident model answer is not enough. A submitted claim is not enough.
 
-A model response is never enough to close a case.
+RecallZero only closes the case when the exact product matched, the required human evidence exists, and the provider has confirmed the outcome for that same case.
 
-```latex
-\[
-\text{REMEDIATED}
-\iff
-M_{\text{exact}}
-\land
-E_{\text{physical}}
-\land
-C_{\text{provider}}(\text{contract\_id})
-\]
-```
+The public demo uses prepared synthetic evidence and a controlled manufacturer sandbox. No real product is damaged and no real manufacturer is contacted.
 
-Where:
+## Why I built the matching this way
 
-- `M_exact` = every required identity predicate passed;
-- `E_physical` = required human evidence exists;
-- `C_provider(contract_id)` = the provider confirmation is valid **and bound to the same Remedy Contract**.
+The tempting version of this project was to hand a receipt and a recall page to an LLM and ask, “Does this match?”
 
-No single LLM output can set `REMEDIATED`.
+I did not want to trust that answer.
 
----
+For a product recall, “looks similar” can be the difference between bothering the wrong person and missing a real safety issue.
 
-## Why this is an agent — not another chatbot
+So exact matching lives in normal TypeScript code, not in the model.
 
-RecallZero is not a chat interface wrapped around a recall search.
+RecallZero checks four required pieces of evidence: product family, model, retailer, and purchase window. All four have to pass before the workflow can move forward. If only some of them match, the product stays a possible match and the remedy is blocked.
 
-The agent receives an already verified **Remedy Contract** and is allowed to do the repetitive digital work through a deliberately narrow tool surface:
+The model does the repetitive work after the facts are settled. It does not get to rewrite the facts that authorize the work.
+
+## How I built it
+
+The web product is built with Next.js, React, and TypeScript. The Strands agent is a separate Python service.
+
+### Official recall lookup
+
+`lib/server/cpsc.ts` talks to the US CPSC recall service.
+
+For the demo, it first tries a direct lookup for the recall. If that is unavailable or slow, it tries a date-window query. If the government service still does not respond in time, the app uses a bundled snapshot of the same official recall and labels that clearly in the UI.
+
+I added the fallback because I did not want judging to depend on whether a public government endpoint happened to be fast that minute. The matching rules stay exactly the same either way.
+
+### Exact-match gate
+
+`lib/domain/match.ts` performs the four checks.
+
+All four passing gives `EXACT_MATCH`. A partial match can only become `POSSIBLE_MATCH`, which cannot create a Remedy Contract.
+
+Before a contract is created, the code recomputes the match instead of trusting a value passed in from the UI. That also means a prompt-injection-style string in the product data cannot simply tell the system to mark itself as remediated.
+
+### Remedy workflow
+
+`lib/domain/workflow.ts` controls the allowed state changes.
+
+It blocks submission when evidence is missing. It rejects the wrong provider confirmation. It prevents the same submission from being sent twice. It also refuses to restore an impossible saved state when the browser reloads.
+
+I treated “done” as a state that has to be proven, not a sentence the agent can say.
+
+### The Strands agent
+
+The actual agent code is in `services/agent/`.
+
+It uses `strands.Agent`, `strands.models.BedrockModel`, `BedrockAgentCoreApp`, and Pydantic validation.
+
+The agent gets only five tools:
 
 1. `inspect_remedy_contract`
 2. `prepare_sandbox_claim`
@@ -101,248 +94,98 @@ The agent receives an already verified **Remedy Contract** and is allowed to do 
 4. `submit_sandbox_claim`
 5. `check_sandbox_outcome`
 
-The agent can move routine work forward, but it cannot become the authority for the underlying safety fact.
+That small tool set is intentional.
 
-That is the core design rule:
+The agent receives a Remedy Contract that has already passed the exact-match checks. From there it can prepare the request, stop for the required human action, submit only to the sandbox, and check the sandbox outcome.
 
-> **Authority before autonomy.**
+It cannot create its own recall, turn a fuzzy match into an exact one, skip missing evidence, or mark its own work complete.
 
-The human is interrupted only at the step software cannot perform: the physical action required by the official remedy. In the public demo, that step uses prepared synthetic evidence; no real product is damaged.
+## Running the real Strands agent on AgentCore
 
----
+I wanted to make sure the Strands integration was more than code that looked deployable.
 
-## How we built it
+I temporarily deployed the actual `services/agent/` runtime to Amazon Bedrock AgentCore and invoked it with a synthetic exact-match Remedy Contract.
 
-### 1. Product surface
+The invocation returned HTTP 200. Bedrock selected `prepare_sandbox_claim`, and that tool call appeared in CloudWatch. The exact request, response, and sanitized log are committed in the repository under `docs/evidence/agentcore-runtime-verification.md`.
 
-The live product is built with **Next.js 16, React 19, and TypeScript**.
+After I captured the proof, I deleted the temporary runtime and the related temporary AWS resources.
 
-It is designed as a product workflow rather than a generic assistant UI. The most important number on the screen is not “messages sent” or “tasks created.” It is **unresolved recalled products**.
+The public browser demo is not connected to that deleted runtime. It mirrors the same workflow locally so the judge path stays fast and deterministic. I have kept that distinction visible instead of pretending the demo is doing something it is not.
 
-### 2. Official recall layer
+## Testing
 
-`lib/server/cpsc.ts` queries the official US CPSC recall service.
+A product-safety workflow is mostly interesting when something goes wrong, so I spent a lot of time testing the blocked paths as well as the happy path.
 
-The demo uses a three-tier retrieval strategy:
+The repository has Vitest, Pytest, Playwright, and GitHub Actions checks for things like:
 
-- direct recall-number query;
-- date-window query fallback;
-- clearly labeled bundled **official snapshot** if the government endpoint is too slow during judging.
+- exact, possible, and no-match separation
+- missing evidence
+- forged provider confirmations
+- illegal workflow transitions
+- contract binding
+- idempotent sandbox submission
+- browser reload/state validation
+- desktop and mobile flows
+- browser console errors
 
-The source mode is visible in the UI. The safety logic does not change when the snapshot fallback is used.
+There is also a stress test that tries 1,000 wrong model variants and makes sure none of them are upgraded to an exact match.
 
-### 3. Deterministic identity kernel
+## Challenges I ran into
 
-Exact identity is decided by code, not by an LLM.
+### Where should the agent stop?
 
-RecallZero checks four required predicates:
+This was the main design problem.
 
-- brand + product family;
-- exact model;
-- retailer;
-- purchase window.
+Every time I gave the model more freedom, I had to ask whether that freedom was actually useful or just made the demo look more “AI.”
 
-A similar item may become `POSSIBLE_MATCH`, but only all required predicates passing can create `EXACT_MATCH` and unlock a Remedy Contract.
+I ended up keeping four things outside the model: the official recall facts, exact product identity, proof that a physical action happened, and the final completion decision.
 
-### 4. Immutable Remedy Contract
+That made the agent less magical on paper, but much easier to trust.
 
-The contract contains the authoritative recall number, official CPSC URL, hazard, official action, required evidence, completion condition, allowed authority, and exact-match status.
+### Making the CPSC lookup reliable
 
-The agent does not get permission to invent or rewrite those facts.
+The CPSC data is the right source, but a live public API can be unpredictable during a demo.
 
-### 5. Real Strands Agents SDK runtime
+I did not want to silently swap in fake data, so the UI shows whether the result came from the live API or from the bundled official snapshot. That way the demo stays usable without hiding where the data came from.
 
-`services/agent/` contains the actual governed agent boundary:
+### Getting the real cloud path working
 
-- `strands.Agent`
-- `strands.models.BedrockModel`
-- `BedrockAgentCoreApp`
-- Pydantic contract validation
-- five allowlisted tools
-- sandbox-only execution authority
+The AgentCore deployment took more work than the local flow because I wanted to deploy the actual agent files, invoke the real Bedrock-backed path, capture the tool call, and then clean everything up afterward.
 
-The model is configured through Amazon Bedrock, with the tracked default using **Amazon Nova 2 Lite**.
+That proof ended up being useful because it shows exactly where the model participated and which tool it chose.
 
-### 6. Verified Bedrock AgentCore execution
+### Deciding what “complete” means
 
-This is not only an architectural stub.
+My first instinct was to treat “claim submitted” as success.
 
-The actual RecallZero Strands agent was temporarily deployed to **Amazon Bedrock AgentCore Runtime** and invoked with a synthetic exact-match Remedy Contract.
+That felt wrong. A person does not care that software filled a form; they care that the recall was dealt with.
 
-The recorded proof includes:
+So RecallZero keeps the case open after submission. It only moves to `REMEDIATED` when the evidence and provider confirmation both check out for the same contract.
 
-- a real `STRANDS_BEDROCK` invocation;
-- **HTTP 200** from AgentCore;
-- a Bedrock-driven call to `prepare_sandbox_claim`;
-- sanitized CloudWatch evidence of that tool call;
-- the exact synthetic request and captured response.
+## Accomplishments that I'm proud of
 
-Evidence: https://github.com/vivekyarra/RecallZero/blob/main/docs/evidence/agentcore-runtime-verification.md
+I am most proud that a wrong product cannot talk its way through the system.
 
-The temporary runtime was deleted after verification. The public browser demo is a deterministic mirror of the same governed protocol, **not** a live AgentCore frontend. That boundary is explicit so the demo remains reliable without overstating what is running in production.
+The demo can show a complete path from a receipt to a verified remedy, but the exact-match decision is still deterministic and testable.
 
-### 7. Verification and adversarial tests
+I also got the real Strands agent running on Bedrock AgentCore, captured the Bedrock-driven tool call, and kept the proof in the repository instead of asking judges to take that part on faith.
 
-The repository includes **Vitest, Pytest, Playwright, and GitHub Actions** coverage for:
+And I like the fact that the end of the demo is not a flashy AI response. It is just one number changing to zero: no unresolved recalled products left in the case.
 
-- exact / possible / no-match separation;
-- official-source restrictions;
-- legal workflow transitions;
-- missing-evidence blocking;
-- forged provider-confirmation rejection;
-- contract binding;
-- idempotent sandbox submission;
-- deterministic stress tests, including 1,000 wrong-model variants;
-- desktop and mobile browser journeys;
-- responsive rendering and browser-console errors.
+## What I learned
 
----
+The biggest thing I learned is that “end to end” does not have to mean “the agent does everything.”
 
-## The safety architecture
+A useful agent can handle most of the boring middle while still knowing when the next step belongs to a person or another system.
 
-| Risk | Boundary |
-|---|---|
-| AI invents a recall | Recall truth comes from CPSC data or a labeled official snapshot |
-| AI upgrades a similar item | Deterministic predicates decide `EXACT_MATCH` |
-| Prompt injection changes product identity | Product identity is recomputed by code before contract creation |
-| AI pretends the physical step happened | Missing evidence blocks submission |
-| AI marks its own work complete | Evidence alone is insufficient; provider confirmation alone is insufficient |
-| A replayed provider result closes the wrong case | Provider outcome must bind to the same contract |
-| Demo contacts a real company | Public flow submits only to `MANUFACTURER_SANDBOX` |
-| Cloud execution is overstated | Historical AgentCore proof and current browser-demo boundary are labeled separately |
+I also came away with a much clearer line between reasoning and authority. The model can decide which allowed step to take next. It should not decide whether the underlying safety fact is true just because that would be convenient.
 
-This architecture gives the agent **real work** while keeping dangerous authority outside the model.
-
----
-
-## A 90-second judge path
-
-1. Import the synthetic receipt and create the Asset Passport.
-2. Run the on-demand CPSC check and inspect the source badge.
-3. Watch all four deterministic identity predicates pass.
-4. Create the Remedy Contract.
-5. Start the governed remedy workflow.
-6. Hit the human gate: physical evidence is required.
-7. Use prepared synthetic evidence.
-8. Submit the idempotent request to the controlled sandbox.
-9. Receive the contract-bound simulated provider outcome.
-10. Verify completion and return the dashboard to **0 unresolved recalls**.
-
-No real manufacturer is contacted. No real product is damaged.
-
----
-
-## Why it matters
-
-RecallZero changes the unit of success from **notification** to **verified closure**.
-
-That matters because the expensive part for a person is often not learning that a process exists. It is carrying the process through all the boring, easy-to-forget steps until the outcome is actually finished.
-
-The same pattern extends beyond recalls:
-
-```text
-verified source
-+ deterministic contract
-+ narrow agent tools
-+ human gate for physical/judgment actions
-+ independent completion proof
-```
-
-That pattern can apply to warranties, returns, repairs, insurance paperwork, compliance forms, and other everyday workflows where people need **outcomes, not more alerts**.
-
----
-
-## Creativity & originality
-
-Most recall tools answer:
-
-> “Is there a recall?”
-
-RecallZero asks a different question:
-
-> **“Can an agent safely carry this all the way to a verified resolution?”**
-
-The original idea is not simply adding AI to recall lookup. It is treating product remediation as a **governed state machine** where probabilistic reasoning can help with routine work but cannot own the safety truth or declare its own success.
-
-The product is intentionally not agent-maximal. It is **authority-minimal**.
-
----
-
-## Challenges we ran into
-
-### Separating intelligence from authority
-
-The hardest architectural decision was deciding what the agent should **not** control.
-
-A pure LLM implementation could have looked more magical, but exact product identity, physical-action evidence, and completion state are too important to leave to prompt compliance. We split the system into deterministic truth, immutable contracts, narrow agent tools, a human gate, and independent verification.
-
-### Making a government-data demo reliable without hiding the fallback
-
-Live public APIs can be slow at exactly the wrong moment. We added an official snapshot fallback, but made the source mode visible so demo reliability does not come at the cost of provenance.
-
-### Proving cloud execution without turning the pitch into an overclaim
-
-The actual agent was deployed and invoked on AgentCore, then the temporary runtime was cleaned up. We kept the proof artifacts and CloudWatch evidence public while clearly separating that historical cloud proof from the deterministic browser demo judges interact with today.
-
-### Defining “done” correctly
-
-A claim being submitted is not the same as a remedy being complete. The workflow therefore refuses to close until evidence and a contract-bound provider result agree.
-
----
-
-## Accomplishments we're proud of
-
-- Built a complete end-to-end product experience instead of a technical-only proof of concept.
-- Implemented a real **Strands Agents SDK** runtime with a narrow tool boundary.
-- Captured an auditable local Strands SDK tool trace.
-- Deployed and invoked the real agent on **Amazon Bedrock AgentCore Runtime** and preserved the sanitized evidence.
-- Built deterministic exact / possible / no-match separation.
-- Implemented contract-bound completion rather than trusting agent text.
-- Added live CPSC retrieval with a transparent official-snapshot fallback.
-- Hardened the project with unit, policy, stress, desktop, mobile, build, lint, type, and secret-scan checks.
-- Preserved honest demo boundaries while still showing the complete human outcome loop.
-
----
-
-## What we learned
-
-The strongest human-facing agents are not the ones with the most authority.
-
-They are the ones with the **clearest authority boundaries**.
-
-For safety-sensitive routine work, the pattern that emerged was:
-
-```latex
-\[
-\text{trusted source}
-+ \text{deterministic contract}
-+ \text{narrow agent tools}
-+ \text{human gate}
-+ \text{independent verification}
-\]
-```
-
-The agent should be free to do the repetitive work, but it should not be free to redefine the facts that authorize that work.
-
----
+That idea is bigger than recalls. The same split could work for warranties, returns, repairs, insurance paperwork, or other jobs where the user wants an outcome, but some facts and approvals should remain independently verifiable.
 
 ## What's next
 
-- Add opt-in ownership sources such as email receipts, retailer exports, purchase history, and warranty cards.
-- Extend deterministic matching across more CPSC product categories.
-- Replace simulated provider outcomes with signed provider callbacks.
-- Run background monitoring so people are pinged only when an owned product is actually affected.
-- Build a durable, scoped-identity AgentCore deployment based on the verified temporary invocation.
-- Expand from one product to a household safety dashboard that prioritizes unresolved risk.
+Right now the demo proves the workflow on one product. The next step is making product ownership automatic and opt-in.
 
----
+I would add receipt and purchase-history imports, then expand the exact-match rules to more CPSC product categories. After that, I would replace the simulated provider result with signed provider callbacks and run the recall checks in the background.
 
-## Built with
-
-**Strands Agents SDK · Amazon Bedrock · Amazon Bedrock AgentCore · Amazon Nova · Next.js 16 · React 19 · TypeScript · Python · Pydantic · Zod · CPSC API · Vitest · Pytest · Playwright · GitHub Actions · Vercel**
-
----
-
-### The idea in one sentence
-
-**RecallZero does not stop when it finds the problem. It stops when the remedy is provably finished.**
+The long-term version is a household safety inbox: you register the products you care about once, RecallZero keeps watching, and it only interrupts you when something you actually own needs a real action.
