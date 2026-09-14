@@ -1,16 +1,18 @@
 # RecallZero
 
-> A Strands agent that turns product recall alerts into finished remedies—checking your exact item, handling the claim, pausing for proof, and verifying the outcome.
+> A Strands agent that finishes the work after a product recall—verifying the exact item, handling the claim, pausing for proof, and keeping the case open until it is actually resolved.
 
 ## Inspiration
 
-RecallZero started with a simple frustration: finding a recall is not the same as fixing it.
+Getting told what to do is not the same as getting it done.
 
-A recall notice can be public for months and the product can still be sitting in someone’s home. The alert is only the first step. After that, the owner still has to figure out whether their exact model is affected, check when and where they bought it, read the official remedy, gather whatever proof is required, submit the claim, and then remember to follow up.
+A government recall notice can tell you that a product is dangerous, but the notice does not finish the job for you. The owner is still left to check whether their exact model is affected, prove when and where it was bought, understand the official remedy, collect the right evidence, submit the claim, and keep following up until the case is actually resolved.
 
-That is a lot of small work for something people understandably want to deal with once and be done with.
+That is the part I wanted to remove.
 
-I wanted to build an agent that handles that follow-through, but without giving the model permission to guess on the safety-critical parts.
+RecallZero started from a broader frustration I have with official processes: the rules and instructions may already exist, but the person is still left doing all of the repetitive follow-through. Product recalls are a good example because the work is tedious, easy to put off, and a wrong match actually matters.
+
+I wanted to build an agent that handles that boring middle without giving the model permission to decide the safety facts for itself.
 
 That became RecallZero.
 
@@ -180,7 +182,7 @@ A useful agent can handle most of the boring middle while still knowing when the
 
 I also came away with a much clearer line between reasoning and authority. The model can decide which allowed step to take next. It should not decide whether the underlying safety fact is true just because that would be convenient.
 
-That idea is bigger than recalls. The same split could work for warranties, returns, repairs, insurance paperwork, or other jobs where the user wants an outcome, but some facts and approvals should remain independently verifiable.
+That idea is bigger than recalls. A lot of official and administrative processes already have rules, required documents, and approval steps. The frustrating part is often the repeated checking, form filling, evidence gathering, submission, and follow-up in between. The same split could work for warranties, returns, insurance claims, government applications, compliance paperwork, and similar jobs where the agent can handle the repetition while the important facts and approvals stay independently verifiable.
 
 ## What's next
 
